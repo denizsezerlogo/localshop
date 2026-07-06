@@ -1,0 +1,13 @@
+# Bağımlılıklar
+node_modules/
+
+# Ortam değişkenleri (asla commit edilmez)
+.env
+
+# Build çıktıları
+dist/
+build/
+
+# Loglar ve işletim sistemi dosyaları
+*.log
+.DS_Store
