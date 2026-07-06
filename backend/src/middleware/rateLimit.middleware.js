@@ -9,6 +9,15 @@ export const generalLimiter = rateLimit({
   message: { success: false, data: null, message: 'Çok fazla istek gönderildi, lütfen daha sonra tekrar deneyin' },
 });
 
+// Ödeme endpoint'i için sıkı limit (kart deneme saldırısı önlemi)
+export const paymentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, data: null, message: 'Çok fazla ödeme denemesi yapıldı, lütfen daha sonra tekrar deneyin' },
+});
+
 // Auth endpointleri için daha sıkı limit (brute-force önlemi)
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
