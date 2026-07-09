@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import routes from './routes/index.js';
 import { notFound, errorHandler } from './middleware/error.middleware.js';
 import { generalLimiter } from './middleware/rateLimit.middleware.js';
+import { localeMiddleware } from './middleware/locale.middleware.js';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(
   })
 );
 app.use(express.json({ limit: '10kb' })); // JSON body parser (aşırı büyük body'leri reddet)
+app.use(localeMiddleware); // istek dili (Accept-Language) — limiter dahil tüm katmanlardan önce
 app.use(generalLimiter); // rate limiting (genel)
 
 if (process.env.NODE_ENV !== 'test') {

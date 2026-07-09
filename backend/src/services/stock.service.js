@@ -6,7 +6,6 @@
 // Ödeme reddedilirse rezervasyon anında iade edilir.
 import { Product } from '../models/product.model.js';
 import { ApiError } from '../utils/ApiError.js';
-import { MSG } from '../constants/messages.js';
 
 // Sipariş kalemleri için stoğu atomik olarak rezerve eder.
 // Koşullu update (stock >= quantity şartıyla $inc) sayesinde aynı anda gelen
@@ -21,7 +20,7 @@ export async function reserveStock(items) {
     );
     if (result.modifiedCount === 0) {
       await releaseStock(reserved);
-      throw new ApiError(400, MSG.ORDER_STOCK_RACE(item.name));
+      throw new ApiError(400, 'ORDER_STOCK_RACE', item.name);
     }
     reserved.push({ productId: item.productId, quantity: item.quantity });
   }

@@ -1,13 +1,7 @@
-// Kullanıcıya dönen tüm İŞ MESAJLARI tek yerde toplanır — Android'deki strings.xml'in karşılığı.
-// Avantajları: tutarlı dil, tek noktadan değişiklik, mesaj tekrarının önlenmesi ve
-// ileride çoklu dil (i18n) desteğine geçişe hazır yapı (bu modül locale dosyalarıyla değiştirilir).
-//
-// Bilinçli tercih: express-validator kural mesajları validator dosyalarında bırakıldı;
-// alan kuralıyla mesajı birlikte okunur ve birlikte değişir. Reuse edilen iş mesajları buradadır.
-//
-// Parametreli mesajlar template fonksiyonu olarak tanımlanır: MSG.ORDER_STOCK_LEFT('Bal', 3)
-
-export const MSG = {
+// Türkçe mesaj kataloğu.
+// en.js ile birebir aynı anahtarları içerir (tests/i18n.test.js bu eşitliği doğrular).
+// Parametreli mesajlar template fonksiyonudur. VAL_* anahtarları validator mesajlarıdır.
+export const tr = {
   // Genel
   SERVER_ERROR: 'Sunucu hatası',
   NOT_FOUND_ROUTE: (method, url) => `Bulunamadı: ${method} ${url}`,
@@ -63,4 +57,28 @@ export const MSG = {
   PAYMENT_SUCCESS: 'Ödeme başarılı',
   PAYMENT_FAILED: (reason) => `Ödeme başarısız: ${reason}`,
   PAYMENT_DECLINED: 'Kart reddedildi',
+
+  // Validator mesajları
+  VAL_NAME_LENGTH: 'İsim 2-60 karakter olmalı',
+  VAL_EMAIL: 'Geçerli bir email girin',
+  VAL_PASSWORD_MIN: 'Parola en az 6 karakter olmalı',
+  VAL_PASSWORD_REQUIRED: 'Parola zorunludur',
+  VAL_ROLE: 'Rol customer veya seller olabilir',
+  VAL_PRODUCT_ID: "Geçersiz ürün id'si",
+  VAL_ORDER_ID: "Geçersiz sipariş id'si",
+  VAL_PAGE: 'page 1 veya daha büyük olmalı',
+  VAL_LIMIT: 'limit 1-50 arası olmalı',
+  VAL_SEARCH_MAX: 'Arama en fazla 100 karakter olabilir',
+  VAL_PRODUCT_NAME: 'Ürün adı 2-120 karakter olmalı',
+  VAL_PRODUCT_DESC: 'Açıklama 1-2000 karakter olmalı',
+  VAL_PRICE: 'Fiyat 0 veya daha büyük bir sayı olmalı',
+  VAL_STOCK: 'Stok 0 veya daha büyük bir tam sayı olmalı',
+  VAL_CATEGORY: 'Kategori 2-60 karakter olmalı',
+  VAL_QUANTITY: 'Adet 1-999 arası bir tam sayı olmalı',
+  VAL_ORDER_STATUS: 'Durum yalnızca SHIPPED veya DELIVERED olabilir',
+  VAL_CARD_NUMBER: 'Kart numarası 13-19 haneli olmalı',
+  VAL_CARD_HOLDER: 'Kart sahibi adı 2-60 karakter olmalı',
+  VAL_EXPIRY_FORMAT: 'Son kullanma tarihi AA/YY formatında olmalı',
+  VAL_EXPIRY_PAST: 'Kartın süresi dolmuş',
+  VAL_CVV: 'CVV 3-4 haneli olmalı',
 };

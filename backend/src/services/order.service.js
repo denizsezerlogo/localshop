@@ -1,7 +1,6 @@
 import { Order } from '../models/order.model.js';
 import { Cart } from '../models/cart.model.js';
 import { ApiError } from '../utils/ApiError.js';
-import { MSG } from '../constants/messages.js';
 
 // Seller'ın yapabileceği durum geçişleri. Ödeme durumları (PAID / PAYMENT_FAILED)
 // buradan DEĞİL, yalnızca payment service üzerinden değişir.
@@ -28,11 +27,11 @@ function buildPagination(page, limit) {
 export async function createOrderFromCart(userId) {
   const cart = await Cart.findOne({ userId }).populate('items.productId');
   const items = (cart?.items || []).filter((i) => i.productId); // silinmiş ürünleri ele
-  if (items.length === 0) throw new ApiError(400, MSG.CART_EMPTY);
+  if (items.length === 0) throw new ApiError(400, 'CART_EMPTY');
 
   for (const item of items) {
     if (item.quantity > item.productId.stock) {
-      throw new ApiError(400, MSG.ORDER_STOCK_LEFT(item.productId.name, item.productId.stock));
+      throw new ApiError(400, 'ORDER_STOCK_LEFT', item.productId.name, item.productId.stock);
     }
   }
 
@@ -81,9 +80,9 @@ export async function listMyOrders(userId, { page, limit }) {
 // Sipariş detayı — yalnızca siparişin sahibi görebilir
 export async function getOrder(userId, orderId) {
   const order = await Order.findById(orderId);
-  if (!order) throw new ApiError(404, MSG.ORDER_NOT_FOUND);
+  if (!order) throw new ApiError(404, 'ORDER_NOT_FOUND');
   if (order.userId.toString() !== userId.toString()) {
-    throw new ApiError(403, MSG.ORDER_FORBIDDEN);
+    throw new ApiError(403, 'ORDER_FORBIDDEN');
   }
   return order;
 }
@@ -104,17 +103,17 @@ export async function listSellerOrders(sellerId, { page, limit }) {
 // Seller: sipariş durumu güncelleme (yalnızca PAID → SHIPPED → DELIVERED)
 export async function updateOrderStatus(sellerId, orderId, nextStatus) {
   const order = await Order.findById(orderId);
-  if (!order) throw new ApiError(404, MSG.ORDER_NOT_FOUND);
+  if (!order) throw new ApiError(404, 'ORDER_NOT_FOUND');
 
   // Siparişler satıcı başına oluşturulduğu için TÜM kalemler bu satıcıya ait olmalı.
   // (every kullanımı bilinçli: karma sipariş asla oluşmamalı, oluşursa da güncellenememeli)
   const ownsAll =
     order.items.length > 0 && order.items.every((i) => i.sellerId.toString() === sellerId.toString());
-  if (!ownsAll) throw new ApiError(403, MSG.ORDER_NO_SELLER_ITEMS);
+  if (!ownsAll) throw new ApiError(403, 'ORDER_NO_SELLER_ITEMS');
 
   const allowed = SELLER_TRANSITIONS[order.status] || [];
   if (!allowed.includes(nextStatus)) {
-    throw new ApiError(400, MSG.ORDER_BAD_TRANSITION(order.status, nextStatus));
+    throw new ApiError(400, 'ORDER_BAD_TRANSITION', order.status, nextStatus);
   }
 
   order.status = nextStatus;

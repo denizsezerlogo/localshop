@@ -1,6 +1,6 @@
 import * as productService from '../services/product.service.js';
 import { ok } from '../utils/response.js';
-import { MSG } from '../constants/messages.js';
+import { t } from '../i18n/i18n.js';
 
 export async function list(req, res) {
   const { category, search, page, limit } = req.query;
@@ -20,17 +20,17 @@ export async function detail(req, res) {
 
 export async function create(req, res) {
   const product = await productService.createProduct(req.user._id, req.body);
-  ok(res, { product }, MSG.PRODUCT_CREATED, 201);
+  ok(res, { product }, t(req.locale, 'PRODUCT_CREATED'), 201);
 }
 
 export async function update(req, res) {
   const product = await productService.updateProduct(req.user._id, req.params.id, req.body);
-  ok(res, { product }, MSG.PRODUCT_UPDATED);
+  ok(res, { product }, t(req.locale, 'PRODUCT_UPDATED'));
 }
 
 export async function remove(req, res) {
   await productService.deleteProduct(req.user._id, req.params.id);
-  ok(res, null, MSG.PRODUCT_DELETED);
+  ok(res, null, t(req.locale, 'PRODUCT_DELETED'));
 }
 
 export async function mine(req, res) {

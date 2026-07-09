@@ -8,8 +8,9 @@
 //   4242 4242 4242 4242 → başarılı ödeme
 //   4000 0000 0000 0000 → başarısız ödeme
 // Diğer tüm kartlar da reddedilir.
-
-import { MSG } from '../constants/messages.js';
+//
+// Ret nedeni metin değil ANAHTAR olarak döner (reasonKey); istek diline çeviri
+// controller katmanında yapılır.
 
 const SUCCESS_CARD = '4242424242424242';
 
@@ -27,5 +28,5 @@ export async function charge({ cardNumber, cardHolder, expiry, cvv, amount }) {
     };
   }
 
-  return { success: false, reason: MSG.PAYMENT_DECLINED };
+  return { success: false, reasonKey: 'PAYMENT_DECLINED' };
 }

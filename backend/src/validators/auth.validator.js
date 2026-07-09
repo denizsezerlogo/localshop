@@ -1,13 +1,14 @@
 import { body } from 'express-validator';
+import { vt } from '../i18n/i18n.js';
 
 export const registerRules = [
-  body('name').trim().isLength({ min: 2, max: 60 }).withMessage('İsim 2-60 karakter olmalı'),
-  body('email').trim().isEmail().withMessage('Geçerli bir email girin').normalizeEmail(),
-  body('password').isLength({ min: 6 }).withMessage('Parola en az 6 karakter olmalı'),
-  body('role').optional().isIn(['customer', 'seller']).withMessage('Rol customer veya seller olabilir'),
+  body('name').trim().isLength({ min: 2, max: 60 }).withMessage(vt('VAL_NAME_LENGTH')),
+  body('email').trim().isEmail().withMessage(vt('VAL_EMAIL')).normalizeEmail(),
+  body('password').isLength({ min: 6 }).withMessage(vt('VAL_PASSWORD_MIN')),
+  body('role').optional().isIn(['customer', 'seller']).withMessage(vt('VAL_ROLE')),
 ];
 
 export const loginRules = [
-  body('email').trim().isEmail().withMessage('Geçerli bir email girin').normalizeEmail(),
-  body('password').notEmpty().withMessage('Parola zorunludur'),
+  body('email').trim().isEmail().withMessage(vt('VAL_EMAIL')).normalizeEmail(),
+  body('password').notEmpty().withMessage(vt('VAL_PASSWORD_REQUIRED')),
 ];
