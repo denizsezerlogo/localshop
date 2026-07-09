@@ -46,21 +46,23 @@ export default function RegisterPage() {
       <form onSubmit={handleSubmit} noValidate>
         <div className="field">
           <label htmlFor="name">{t.FIELD_NAME}</label>
-          <input id="name" value={values.name} onChange={set('name')} placeholder={t.PH_NAME} required />
+          <input id="name" autoComplete="name" value={values.name} onChange={set('name')} placeholder={t.PH_NAME} required />
         </div>
         <div className="field">
           <label htmlFor="email">{t.FIELD_EMAIL}</label>
-          <input id="email" type="email" value={values.email} onChange={set('email')} placeholder={t.PH_EMAIL} required />
+          <input id="email" type="email" autoComplete="email" value={values.email} onChange={set('email')} placeholder={t.PH_EMAIL} required />
         </div>
         <div className="field">
           <label htmlFor="password">{t.FIELD_PASSWORD}</label>
-          <input id="password" type="password" value={values.password} onChange={set('password')} placeholder={t.PH_PASSWORD_REGISTER} required />
+          {/* new-password: tarayıcı kayıtlı şifreyi DOLDURMAZ, güçlü şifre önerir */}
+          <input id="password" type="password" autoComplete="new-password" value={values.password} onChange={set('password')} placeholder={t.PH_PASSWORD_REGISTER} required />
         </div>
         <div className="field">
           <label htmlFor="passwordConfirm">{t.FIELD_PASSWORD_CONFIRM}</label>
           <input
             id="passwordConfirm"
             type="password"
+            autoComplete="new-password"
             value={values.passwordConfirm}
             onChange={set('passwordConfirm')}
             placeholder={t.PH_PASSWORD_CONFIRM}

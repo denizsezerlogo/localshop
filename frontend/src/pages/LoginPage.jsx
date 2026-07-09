@@ -39,11 +39,12 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit} noValidate>
         <div className="field">
           <label htmlFor="email">{t.FIELD_EMAIL}</label>
-          <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.PH_EMAIL} required />
+          <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.PH_EMAIL} required />
         </div>
         <div className="field">
           <label htmlFor="password">{t.FIELD_PASSWORD}</label>
-          <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.PH_PASSWORD_LOGIN} required />
+          {/* current-password: parola yöneticisi entegrasyonu bilinçli olarak açık bırakıldı */}
+          <input id="password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.PH_PASSWORD_LOGIN} required />
         </div>
         <button className="btn btn-primary btn-block" type="submit" disabled={submitting}>
           {submitting ? t.BUSY_LOGIN : t.BTN_LOGIN}
