@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Parola zorunludur'],
       minlength: [6, 'Parola en az 6 karakter olmalı'],
-      select: false, // sorgularda parola hash'i varsayılan olarak DÖNMEZ (güvenlik gereksinimi)
+      select: false, // sorgularda parola hash'i varsayılan olarak dönmez; API response'larına sızamaz
     },
     role: {
       type: String,
