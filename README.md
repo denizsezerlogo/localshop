@@ -12,11 +12,12 @@ Yerel üreticilerin ürünlerini doğrudan müşterilere sattığı online marke
 - [x] Backend: Authentication (JWT, bcrypt, rol bazlı yetkilendirme)
 - [x] Backend: Product modülü (seller CRUD + katalog: filtre, arama, sayfalama)
 - [x] Backend: Cart modülü (stok kontrollü sepet işlemleri)
-- [x] Backend: Order modülü (snapshot'lı kalemler, stok düşümü, durum akışı)
-- [x] Backend: FakePay ödeme simülasyonu
+- [x] Backend: Order modülü (satıcı başına sipariş, snapshot'lı kalemler, durum akışı)
+- [x] Backend: FakePay ödeme simülasyonu (ödeme anında stok rezervasyonu)
 - [x] Backend: Seed script (`npm run seed`)
+- [x] API dokümantasyonu (Postman Collection — `docs/localshop.postman_collection.json`)
 - [ ] Frontend: React uygulaması
-- [ ] API dokümantasyonu + demo video
+- [ ] Demo video
 
 ## Hızlı Başlangıç (backend)
 
@@ -53,7 +54,7 @@ Test: `curl http://localhost:3000/api/health`
 | POST | /api/cart/items | Customer | Sepete ürün ekle `{productId, quantity}` |
 | PUT | /api/cart/items/:productId | Customer | Adet değiştir `{quantity}` |
 | DELETE | /api/cart/items/:productId | Customer | Sepetten çıkar |
-| POST | /api/orders | Customer | Sepetten sipariş oluştur (`PENDING_PAYMENT`) |
+| POST | /api/orders | Customer | Sepetten sipariş oluştur — satıcı başına bir sipariş (`PENDING_PAYMENT`) |
 | GET | /api/orders | Customer | Sipariş geçmişi |
 | GET | /api/orders/:id | Customer (sahibi) | Sipariş detayı |
 | GET | /api/orders/seller | Seller | Ürünlerini içeren siparişler |
@@ -73,5 +74,14 @@ Test: `curl http://localhost:3000/api/health`
 | `4000 0000 0000 0000` | Başarısız ödeme |
 
 Kart bilgileri hiçbir koşulda veritabanına yazılmaz; siparişte yalnızca işlem referansı (`transactionId`) tutulur.
+
+## Tasarım Kararları
+
+- **Satıcı başına sipariş:** Checkout'ta sepet satıcıya göre gruplanır ve satıcı başına ayrı sipariş oluşturulur. Böylece her siparişin tek `status`'u ve tek ödeme akışı olur (PDF modeli korunur) ve hiçbir satıcı başka bir satıcının kalemlerinin durumunu değiştiremez.
+- **Ödeme anında stok rezervasyonu:** Stok, sipariş oluşturulurken yalnızca kontrol edilir; atomik rezervasyon (koşullu `$inc`) ödeme sırasında yapılır, reddedilen ödemede anında iade edilir. Yarım bırakılan siparişler stok kilitleyemez.
+- **Snapshot'lı sipariş kalemleri:** Sipariş, ürünün adını/fiyatını kopyalar; ürün sonradan değişse veya silinse bile sipariş kaydı bozulmaz.
+- **FakePay soyutlaması:** Ödeme sağlayıcısı ayrı bir servis modülüdür; gerçek sağlayıcıya geçişte yalnızca bu modül değişir.
+- **Katmanlı mimari:** `routes → controllers → services → models`; iş kuralları service katmanında toplanır, controller'lar incedir.
+- **Merkezi mesajlar:** Kullanıcıya dönen tüm iş mesajları `src/constants/messages.js` altında (strings.xml yaklaşımı); i18n'e hazır.
 
 Tüm response'lar aynı formattadır: `{ "success": boolean, "data": object|null, "message": string }`
