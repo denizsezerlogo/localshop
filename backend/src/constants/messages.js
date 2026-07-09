@@ -47,7 +47,10 @@ export const MSG = {
   // Order
   ORDER_NOT_FOUND: 'Sipariş bulunamadı',
   ORDER_FORBIDDEN: 'Bu siparişi görüntüleme yetkiniz yok',
-  ORDER_CREATED: 'Sipariş oluşturuldu, ödeme bekleniyor',
+  ORDER_CREATED: (count) =>
+    count > 1
+      ? `Sepetiniz ${count} farklı satıcının ürünlerini içerdiği için ${count} ayrı sipariş oluşturuldu, ödeme bekleniyor`
+      : 'Sipariş oluşturuldu, ödeme bekleniyor',
   ORDER_NO_SELLER_ITEMS: 'Bu siparişte size ait ürün bulunmuyor',
   ORDER_BAD_TRANSITION: (from, to) => `'${from}' durumundan '${to}' durumuna geçilemez`,
   ORDER_STATUS_UPDATED: 'Sipariş durumu güncellendi',

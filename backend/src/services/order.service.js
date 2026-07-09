@@ -1,6 +1,5 @@
 import { Order } from '../models/order.model.js';
 import { Cart } from '../models/cart.model.js';
-import { Product } from '../models/product.model.js';
 import { ApiError } from '../utils/ApiError.js';
 import { MSG } from '../constants/messages.js';
 
@@ -17,56 +16,55 @@ function buildPagination(page, limit) {
   return { page: p, limit: l, skip: (p - 1) * l };
 }
 
-// Sepetten sipariş oluşturma — checkout'un kalbi
+// Sepetten sipariş oluşturma — checkout'un kalbi.
+//
+// Mimari karar (review bulgusu #1'in çözümü): Sepet SATICIYA GÖRE gruplanır ve
+// satıcı başına AYRI bir sipariş oluşturulur. Böylece PDF'teki Order modeli
+// (tek status, tek /payment/:orderId akışı) her sipariş için aynen korunur ve
+// hiçbir satıcı başka bir satıcının kalemlerinin durumunu değiştiremez.
+// Tek satıcılı sepette davranış değişmez: tek sipariş oluşur.
+//
+// Stok burada yalnızca KONTROL edilir (erken ve anlaşılır hata için);
+// kesin rezervasyon ödeme anında yapılır (bkz. stock.service.js).
 export async function createOrderFromCart(userId) {
   const cart = await Cart.findOne({ userId }).populate('items.productId');
   const items = (cart?.items || []).filter((i) => i.productId); // silinmiş ürünleri ele
   if (items.length === 0) throw new ApiError(400, MSG.CART_EMPTY);
 
-  // 1) Ön kontrol: tüm kalemler için stok yeterli mi?
   for (const item of items) {
     if (item.quantity > item.productId.stock) {
       throw new ApiError(400, MSG.ORDER_STOCK_LEFT(item.productId.name, item.productId.stock));
     }
   }
 
-  // 2) Stok düşümü: atomik koşullu update (stock >= quantity şartıyla $inc).
-  //    Aynı anda gelen iki sipariş aynı stoğu tüketemez. Bir kalem başarısız olursa
-  //    önceden düşülenler geri alınır (compensating update).
-  //    Not: Gerçek sistemde bu blok MongoDB transaction'ı ile yapılır (replica set gerektirir);
-  //    MVP lokal standalone MongoDB'de çalıştığı için bu yaklaşım bilinçli olarak seçildi.
-  const decremented = [];
+  // Satıcıya göre grupla
+  const groups = new Map();
   for (const item of items) {
-    const result = await Product.updateOne(
-      { _id: item.productId._id, stock: { $gte: item.quantity } },
-      { $inc: { stock: -item.quantity } }
-    );
-    if (result.modifiedCount === 0) {
-      for (const done of decremented) {
-        await Product.updateOne({ _id: done.id }, { $inc: { stock: done.qty } });
-      }
-      throw new ApiError(400, MSG.ORDER_STOCK_RACE(item.productId.name));
-    }
-    decremented.push({ id: item.productId._id, qty: item.quantity });
+    const key = item.productId.sellerId.toString();
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(item);
   }
 
-  // 3) Snapshot'lı sipariş kalemleri + toplam HER ZAMAN server'da, DB fiyatlarından hesaplanır
-  const orderItems = items.map((i) => ({
-    productId: i.productId._id,
-    name: i.productId.name,
-    price: i.productId.price,
-    sellerId: i.productId.sellerId,
-    quantity: i.quantity,
-  }));
-  const totalPrice = Number(orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0).toFixed(2));
+  // Her grup için snapshot'lı bir sipariş oluştur.
+  // Toplam HER ZAMAN server'da, DB fiyatlarından hesaplanır.
+  const orders = [];
+  for (const groupItems of groups.values()) {
+    const orderItems = groupItems.map((i) => ({
+      productId: i.productId._id,
+      name: i.productId.name,
+      price: i.productId.price,
+      sellerId: i.productId.sellerId,
+      quantity: i.quantity,
+    }));
+    const totalPrice = Number(orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0).toFixed(2));
+    orders.push(await Order.create({ userId, items: orderItems, totalPrice }));
+  }
 
-  const order = await Order.create({ userId, items: orderItems, totalPrice });
-
-  // 4) Sepeti temizle
+  // Sepeti temizle
   cart.items = [];
   await cart.save();
 
-  return order;
+  return orders;
 }
 
 // Müşterinin kendi sipariş geçmişi
@@ -109,8 +107,11 @@ export async function updateOrderStatus(sellerId, orderId, nextStatus) {
   const order = await Order.findById(orderId);
   if (!order) throw new ApiError(404, MSG.ORDER_NOT_FOUND);
 
-  const hasItems = order.items.some((i) => i.sellerId.toString() === sellerId.toString());
-  if (!hasItems) throw new ApiError(403, MSG.ORDER_NO_SELLER_ITEMS);
+  // Siparişler satıcı başına oluşturulduğu için TÜM kalemler bu satıcıya ait olmalı.
+  // (every kullanımı bilinçli: karma sipariş asla oluşmamalı, oluşursa da güncellenememeli)
+  const ownsAll =
+    order.items.length > 0 && order.items.every((i) => i.sellerId.toString() === sellerId.toString());
+  if (!ownsAll) throw new ApiError(403, MSG.ORDER_NO_SELLER_ITEMS);
 
   const allowed = SELLER_TRANSITIONS[order.status] || [];
   if (!allowed.includes(nextStatus)) {

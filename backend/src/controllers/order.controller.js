@@ -3,8 +3,9 @@ import { ok } from '../utils/response.js';
 import { MSG } from '../constants/messages.js';
 
 export async function create(req, res) {
-  const order = await orderService.createOrderFromCart(req.user._id);
-  ok(res, { order }, MSG.ORDER_CREATED, 201);
+  // Sepet satıcıya göre bölündüğü için birden fazla sipariş dönebilir
+  const orders = await orderService.createOrderFromCart(req.user._id);
+  ok(res, { orders }, MSG.ORDER_CREATED(orders.length), 201);
 }
 
 export async function listMine(req, res) {

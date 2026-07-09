@@ -1,6 +1,7 @@
 import { Order } from '../models/order.model.js';
 import { ApiError } from '../utils/ApiError.js';
 import * as fakePay from './fakePay.service.js';
+import { reserveStock, releaseStock } from './stock.service.js';
 import { MSG } from '../constants/messages.js';
 
 export async function payOrder(userId, orderId, card) {
@@ -17,7 +18,10 @@ export async function payOrder(userId, orderId, card) {
     throw new ApiError(400, MSG.PAYMENT_NOT_PAYABLE);
   }
 
-  // Tutar HER ZAMAN sipariş kaydından okunur — client'tan gelen tutara güvenilmez
+  // 1) Stok ÖDEME ANINDA atomik olarak rezerve edilir; yetersizse ödeme hiç denenmez.
+  const reserved = await reserveStock(order.items);
+
+  // 2) Tutar HER ZAMAN sipariş kaydından okunur — client'tan gelen tutara güvenilmez
   const result = await fakePay.charge({ ...card, amount: order.totalPrice });
 
   // GÜVENLİK: Kart bilgileri bilinçli olarak veritabanına yazılmaz ve loglanmaz.
@@ -26,6 +30,8 @@ export async function payOrder(userId, orderId, card) {
     order.status = 'PAID';
     order.paymentResult = { transactionId: result.transactionId, processedAt: new Date() };
   } else {
+    // 3) Ödeme reddedildi → rezervasyon anında iade edilir, sipariş tekrar denenebilir
+    await releaseStock(reserved);
     order.status = 'PAYMENT_FAILED';
   }
   await order.save();
