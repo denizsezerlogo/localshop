@@ -1,10 +1,14 @@
 import rateLimit from 'express-rate-limit';
 import { MSG } from '../constants/messages.js';
 
+// Test koşularında limitler devre dışına yakın gevşetilir; aksi halde
+// art arda çalışan senaryolar 429'a takılıp yanlış negatif üretir.
+const isTest = process.env.NODE_ENV === 'test';
+
 // Genel limit: IP başına 15 dakikada 300 istek
 export const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 300,
+  limit: isTest ? 100000 : 300,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, data: null, message: MSG.RATE_LIMITED },
@@ -13,7 +17,7 @@ export const generalLimiter = rateLimit({
 // Ödeme endpoint'i için sıkı limit (kart deneme saldırısı önlemi)
 export const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 20,
+  limit: isTest ? 100000 : 20,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, data: null, message: MSG.RATE_LIMITED_PAYMENT },
@@ -22,7 +26,7 @@ export const paymentLimiter = rateLimit({
 // Auth endpointleri için daha sıkı limit (brute-force önlemi)
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 30,
+  limit: isTest ? 100000 : 30,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, data: null, message: MSG.RATE_LIMITED_AUTH },
