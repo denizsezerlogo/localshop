@@ -17,6 +17,7 @@ Yerel üreticilerin ürünlerini doğrudan müşterilere sattığı online marke
 - [x] Backend: Seed script (`npm run seed`)
 - [x] API dokümantasyonu (Postman Collection — `docs/localshop.postman_collection.json`)
 - [x] Frontend: React (Vite) uygulaması — katalog, sepet, ödeme, siparişler, satıcı paneli
+- [x] Backend entegrasyon testleri (Vitest + Supertest — 37 senaryo)
 - [ ] Demo video
 
 ## Hızlı Başlangıç
@@ -41,6 +42,17 @@ npm install
 cp .env.example .env   # API adresi (varsayılan: http://localhost:3000/api)
 npm run dev            # http://localhost:5173
 ```
+
+## Testler
+
+Backend entegrasyon testleri gerçek bir lokal MongoDB'ye karşı, **ayrı bir test veritabanında** (`localshop_test`) çalışır — geliştirme verinize dokunmaz.
+
+```bash
+cd backend
+npm test
+```
+
+Kapsam: auth akışı, ürün CRUD + sahiplik kontrolleri, sepet stok kuralları, satıcı bazlı sipariş bölme, ödeme anında stok rezervasyonu/iadesi, eşzamanlı ödeme yarışında stok tutarlılığı ve sipariş durum geçiş kuralları.
 
 Seed hesapları (parola: `sifre123`): seller → `ayse@localshop.dev`, `mehmet@localshop.dev` · customer → `deniz@localshop.dev`, `elif@localshop.dev`
 
