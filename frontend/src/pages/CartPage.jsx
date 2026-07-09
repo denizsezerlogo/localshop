@@ -4,10 +4,12 @@ import { useCart } from '../context/CartContext';
 import { createOrders } from '../api/orders.api';
 import { formatPrice } from '../utils/format';
 import EmptyState from '../components/EmptyState';
+import Loader from '../components/Loader';
+import ErrorMessage from '../components/ErrorMessage';
 import { MSG } from '../constants/messages';
 
 export default function CartPage() {
-  const { cart, total, updateItem, removeItem, clearLocal } = useCart();
+  const { cart, total, loading, error: loadError, refreshCart, updateItem, removeItem, clearLocal } = useCart();
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState(null);
@@ -59,6 +61,11 @@ export default function CartPage() {
       setCheckingOut(false);
     }
   };
+
+  // Boş sepet mesajından ÖNCE yükleme ve hata durumları ele alınır;
+  // aksi halde başarısız istek "boş sepet" gibi görünür.
+  if (loading) return <Loader label={MSG.LOADING_CART} />;
+  if (loadError) return <ErrorMessage message={loadError} onRetry={refreshCart} />;
 
   if (items.length === 0) {
     return (

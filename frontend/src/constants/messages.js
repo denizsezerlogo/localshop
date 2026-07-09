@@ -16,6 +16,7 @@ export const MSG = {
   LOADING_PRODUCT: 'Ürün yükleniyor…',
   LOADING_ORDERS: 'Siparişler yükleniyor…',
   LOADING_ORDER: 'Sipariş yükleniyor…',
+  LOADING_CART: 'Sepet yükleniyor…',
 
   // Meşgul buton durumları
   BUSY_LOGIN: 'Giriş yapılıyor…',

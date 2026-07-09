@@ -27,7 +27,9 @@ export default function ProductListPage() {
   useEffect(() => {
     listCategories()
       .then((res) => setCategories(res.data.categories))
-      .catch(() => {}); // kategori filtresi opsiyonel, hata sayfayı bloklamasın
+      // Bilinçli graceful degradation: kategori listesi alınamazsa filtre
+      // "Tüm kategoriler" seçeneğiyle sınırlı kalır; ürün listesi etkilenmez.
+      .catch(() => {});
   }, []);
 
   const { data, loading, error, refetch } = useFetch(

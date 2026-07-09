@@ -1,5 +1,5 @@
-import { createContext, useContext, useState } from 'react';
-import { loginRequest, registerRequest } from '../api/auth.api';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { loginRequest, registerRequest, meRequest } from '../api/auth.api';
 
 // Oturum durumu tüm uygulamada tek yerden yönetilir.
 // Not: Token localStorage'da tutulur; XSS'e karşı üretim ortamında
@@ -14,6 +14,19 @@ export function AuthProvider({ children }) {
       return null;
     }
   });
+
+  // Açılışta localStorage'daki oturum server'a doğrulatılır: kullanıcı silinmiş,
+  // token süresi dolmuş veya lokal veri bozulmuşsa UI eski oturumla kalmaz.
+  // (401 durumunda API client oturumu temizleyip login'e yönlendirir.)
+  useEffect(() => {
+    if (!localStorage.getItem('token')) return;
+    meRequest()
+      .then((res) => {
+        setUser(res.data.user);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+      })
+      .catch(() => {});
+  }, []);
 
   const saveSession = ({ user: nextUser, token }) => {
     localStorage.setItem('token', token);

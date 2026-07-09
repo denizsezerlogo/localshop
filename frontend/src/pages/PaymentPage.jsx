@@ -9,7 +9,10 @@ import ErrorMessage from '../components/ErrorMessage';
 import StatusBadge from '../components/StatusBadge';
 import { MSG } from '../constants/messages';
 
-// Girdi maskeleri: kart numarası 4'lü gruplar, tarih AA/YY
+// Girdi maskeleri: kart numarası 4'lü gruplar, tarih AA/YY.
+// Kart girişi bilinçli olarak 16 haneyle sınırlı: FakePay yalnızca 16 haneli
+// test kartlarını kabul eder. Gerçek bir gateway'e geçişte bu sınır
+// 13-19 haneye genişletilmelidir (backend validatörü bu aralığı zaten destekler).
 const formatCardNumber = (value) =>
   value.replace(/\D/g, '').slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ');
 

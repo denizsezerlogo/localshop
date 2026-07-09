@@ -16,8 +16,26 @@ export default function ProductForm({ initialValues, onSubmit, submitLabel = 'Ka
 
   const set = (key) => (e) => setValues((prev) => ({ ...prev, [key]: e.target.value }));
 
+  // Client tarafı ön kontrol: boş sayı alanı Number('') → 0'a dönüşüp
+  // istenmeden ücretsiz ürün / sıfır stok oluşturmasın. Nihai otorite backend validasyonudur.
+  const validate = () => {
+    if (values.name.trim().length < 2) return 'Ürün adı en az 2 karakter olmalı';
+    if (!values.description.trim()) return 'Açıklama zorunludur';
+    const price = Number(values.price);
+    if (values.price === '' || !Number.isFinite(price) || price < 0) return 'Geçerli bir fiyat girin (0 veya üzeri)';
+    const stock = Number(values.stock);
+    if (values.stock === '' || !Number.isInteger(stock) || stock < 0) return 'Stok 0 veya daha büyük bir tam sayı olmalı';
+    if (values.category.trim().length < 2) return 'Kategori en az 2 karakter olmalı';
+    return '';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
     setError('');
     setSubmitting(true);
     try {
