@@ -4,7 +4,7 @@
 // (Stripe, iyzico vb.) geçişte yalnızca bu dosya bir adaptörle değiştirilir;
 // payment service ve geri kalan kod aynı kalır.
 //
-// Test kartları (ödev tanımı gereği):
+// Test kartları:
 //   4242 4242 4242 4242 → başarılı ödeme
 //   4000 0000 0000 0000 → başarısız ödeme
 // Diğer tüm kartlar da reddedilir.

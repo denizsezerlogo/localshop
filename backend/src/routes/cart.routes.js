@@ -6,7 +6,7 @@ import { protect, authorize } from '../middleware/auth.middleware.js';
 
 const router = Router();
 
-// Sepet yalnızca customer rolüne açıktır (PDF'teki rol tanımları gereği)
+// Sepet yalnızca customer rolüne açıktır; seller hesapları alışveriş yapamaz
 router.use(protect, authorize('customer'));
 
 router.get('/', cartController.getCart);

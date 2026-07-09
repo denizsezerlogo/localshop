@@ -18,9 +18,8 @@ function buildPagination(page, limit) {
 
 // Sepetten sipariş oluşturma — checkout'un kalbi.
 //
-// Mimari karar (review bulgusu #1'in çözümü): Sepet SATICIYA GÖRE gruplanır ve
-// satıcı başına AYRI bir sipariş oluşturulur. Böylece PDF'teki Order modeli
-// (tek status, tek /payment/:orderId akışı) her sipariş için aynen korunur ve
+// Mimari karar: Sepet SATICIYA GÖRE gruplanır ve satıcı başına AYRI bir sipariş
+// oluşturulur. Böylece her siparişin tek status'u ve tek ödeme akışı olur;
 // hiçbir satıcı başka bir satıcının kalemlerinin durumunu değiştiremez.
 // Tek satıcılı sepette davranış değişmez: tek sipariş oluşur.
 //

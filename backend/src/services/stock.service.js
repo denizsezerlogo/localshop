@@ -1,4 +1,4 @@
-// Stok rezervasyon servisi — review bulgusu #2'nin çözümü.
+// Stok rezervasyon servisi.
 //
 // Mimari karar: Stok, sipariş OLUŞTURULURKEN değil, ÖDEME ANINDA rezerve edilir.
 // Böylece yarım bırakılan (PENDING_PAYMENT) veya reddedilen (PAYMENT_FAILED)

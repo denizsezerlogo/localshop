@@ -77,7 +77,7 @@ Kart bilgileri hiçbir koşulda veritabanına yazılmaz; siparişte yalnızca i�
 
 ## Tasarım Kararları
 
-- **Satıcı başına sipariş:** Checkout'ta sepet satıcıya göre gruplanır ve satıcı başına ayrı sipariş oluşturulur. Böylece her siparişin tek `status`'u ve tek ödeme akışı olur (PDF modeli korunur) ve hiçbir satıcı başka bir satıcının kalemlerinin durumunu değiştiremez.
+- **Satıcı başına sipariş:** Checkout'ta sepet satıcıya göre gruplanır ve satıcı başına ayrı sipariş oluşturulur. Böylece her siparişin tek `status`'u ve tek ödeme akışı olur; hiçbir satıcı başka bir satıcının kalemlerinin durumunu değiştiremez.
 - **Ödeme anında stok rezervasyonu:** Stok, sipariş oluşturulurken yalnızca kontrol edilir; atomik rezervasyon (koşullu `$inc`) ödeme sırasında yapılır, reddedilen ödemede anında iade edilir. Yarım bırakılan siparişler stok kilitleyemez.
 - **Snapshot'lı sipariş kalemleri:** Sipariş, ürünün adını/fiyatını kopyalar; ürün sonradan değişse veya silinse bile sipariş kaydı bozulmaz.
 - **FakePay soyutlaması:** Ödeme sağlayıcısı ayrı bir servis modülüdür; gerçek sağlayıcıya geçişte yalnızca bu modül değişir.
