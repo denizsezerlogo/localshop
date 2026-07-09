@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { CATEGORIES } from '../constants/categories.js';
 
 const productSchema = new mongoose.Schema(
   {
@@ -31,6 +32,7 @@ const productSchema = new mongoose.Schema(
       required: [true, 'Kategori zorunludur'],
       trim: true,
       lowercase: true, // filtrelemede büyük/küçük harf sorunu yaşanmasın
+      enum: CATEGORIES, // canonical anahtarlar; görünen ad frontend'de dile göre çevrilir
     },
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,

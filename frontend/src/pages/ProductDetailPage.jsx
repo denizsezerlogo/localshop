@@ -53,7 +53,9 @@ export default function ProductDetailPage() {
       </p>
       <div className="product-detail">
         <div className="card">
-          <span className="category" style={{ display: 'inline-block', marginBottom: 10 }}>{product.category}</span>
+          <span className="category" style={{ display: 'inline-block', marginBottom: 10 }}>
+            {t.CATEGORY_LABELS[product.category] || product.category}
+          </span>
           <h1 style={{ marginBottom: 8 }}>{product.name}</h1>
           {product.sellerId?.name && (
             <p className="muted" style={{ marginBottom: 12 }}>{t.SELLER_PREFIX(product.sellerId.name)}</p>

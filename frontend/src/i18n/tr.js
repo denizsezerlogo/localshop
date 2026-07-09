@@ -154,12 +154,12 @@ export const tr = {
   FIELD_PRICE: 'Fiyat (₺)',
   FIELD_STOCK: 'Stok',
   FIELD_CATEGORY: 'Kategori',
-  PH_CATEGORY: 'Örn. food, cosmetics, crafts',
+  PH_CATEGORY: 'Kategori seçin',
   VAL_PRODUCT_NAME: 'Ürün adı en az 2 karakter olmalı',
   VAL_DESC_REQUIRED: 'Açıklama zorunludur',
   VAL_PRICE: 'Geçerli bir fiyat girin (0 veya üzeri)',
   VAL_STOCK: 'Stok 0 veya daha büyük bir tam sayı olmalı',
-  VAL_CATEGORY: 'Kategori en az 2 karakter olmalı',
+  VAL_CATEGORY: 'Kategori seçin',
 
   // Ürün ekleme / düzenleme
   PAGE_ADD_PRODUCT: 'Yeni Ürün Ekle',
@@ -172,6 +172,16 @@ export const tr = {
   NOT_FOUND_TITLE: 'Sayfa bulunamadı',
   NOT_FOUND_HINT: 'Aradığınız sayfa taşınmış veya hiç var olmamış olabilir.',
   BTN_BACK_PRODUCTS: 'Ürünlere dön',
+
+  // Kategori etiketleri (canonical anahtar → görünen ad)
+  CATEGORY_LABELS: {
+    food: 'Gıda',
+    cosmetics: 'Kozmetik',
+    crafts: 'El Sanatları',
+    textile: 'Tekstil',
+    home: 'Ev & Yaşam',
+    other: 'Diğer',
+  },
 
   // Sipariş durumu etiketleri
   STATUS: {

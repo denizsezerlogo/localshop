@@ -73,7 +73,7 @@ export const tr = {
   VAL_PRODUCT_DESC: 'Açıklama 1-2000 karakter olmalı',
   VAL_PRICE: 'Fiyat 0 veya daha büyük bir sayı olmalı',
   VAL_STOCK: 'Stok 0 veya daha büyük bir tam sayı olmalı',
-  VAL_CATEGORY: 'Kategori 2-60 karakter olmalı',
+  VAL_CATEGORY: 'Geçerli bir kategori seçin',
   VAL_QUANTITY: 'Adet 1-999 arası bir tam sayı olmalı',
   VAL_ORDER_STATUS: 'Durum yalnızca SHIPPED veya DELIVERED olabilir',
   VAL_CARD_NUMBER: 'Kart numarası 13-19 haneli olmalı',

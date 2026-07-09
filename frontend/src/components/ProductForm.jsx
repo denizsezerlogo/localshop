@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLang } from '../i18n/LanguageContext';
+import { CATEGORIES } from '../constants/categories';
 
 // Ürün ekleme ve düzenleme sayfalarının ortak formu.
 // initialValues verilirse düzenleme modunda çalışır.
@@ -26,7 +27,7 @@ export default function ProductForm({ initialValues, onSubmit, submitLabel }) {
     if (values.price === '' || !Number.isFinite(price) || price < 0) return t.VAL_PRICE;
     const stock = Number(values.stock);
     if (values.stock === '' || !Number.isInteger(stock) || stock < 0) return t.VAL_STOCK;
-    if (values.category.trim().length < 2) return t.VAL_CATEGORY;
+    if (!CATEGORIES.includes(values.category)) return t.VAL_CATEGORY;
     return '';
   };
 
@@ -45,7 +46,7 @@ export default function ProductForm({ initialValues, onSubmit, submitLabel }) {
         description: values.description.trim(),
         price: Number(values.price),
         stock: Number(values.stock),
-        category: values.category.trim().toLowerCase(),
+        category: values.category,
       });
     } catch (err) {
       setError(err.message);
@@ -81,7 +82,14 @@ export default function ProductForm({ initialValues, onSubmit, submitLabel }) {
 
       <div className="field">
         <label htmlFor="category">{t.FIELD_CATEGORY}</label>
-        <input id="category" value={values.category} onChange={set('category')} placeholder={t.PH_CATEGORY} required />
+        {/* Kategori serbest metin değil, sabit listeden seçilir: veri tutarlı kalır
+            ve görünen ad seçili dile göre çevrilebilir */}
+        <select id="category" value={values.category} onChange={set('category')} required>
+          <option value="" disabled>{t.PH_CATEGORY}</option>
+          {CATEGORIES.map((c) => (
+            <option key={c} value={c}>{t.CATEGORY_LABELS[c]}</option>
+          ))}
+        </select>
       </div>
 
       <button className="btn btn-primary" type="submit" disabled={submitting}>

@@ -83,7 +83,7 @@ function ProductsTab() {
                 <td>
                   <Link to={`/products/${product._id}`} style={{ fontWeight: 600 }}>{product.name}</Link>
                 </td>
-                <td>{product.category}</td>
+                <td>{t.CATEGORY_LABELS[product.category] || product.category}</td>
                 <td>{formatPrice(product.price)}</td>
                 <td>{product.stock === 0 ? <span className="stock-out">{t.STOCK_OUT}</span> : product.stock}</td>
                 <td>

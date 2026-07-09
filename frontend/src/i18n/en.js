@@ -153,12 +153,12 @@ export const en = {
   FIELD_PRICE: 'Price (₺)',
   FIELD_STOCK: 'Stock',
   FIELD_CATEGORY: 'Category',
-  PH_CATEGORY: 'e.g. food, cosmetics, crafts',
+  PH_CATEGORY: 'Select a category',
   VAL_PRODUCT_NAME: 'Product name must be at least 2 characters',
   VAL_DESC_REQUIRED: 'Description is required',
   VAL_PRICE: 'Enter a valid price (0 or greater)',
   VAL_STOCK: 'Stock must be an integer of 0 or greater',
-  VAL_CATEGORY: 'Category must be at least 2 characters',
+  VAL_CATEGORY: 'Select a category',
 
   // Add / edit product
   PAGE_ADD_PRODUCT: 'Add New Product',
@@ -171,6 +171,16 @@ export const en = {
   NOT_FOUND_TITLE: 'Page not found',
   NOT_FOUND_HINT: 'The page you are looking for may have moved or never existed.',
   BTN_BACK_PRODUCTS: 'Back to products',
+
+  // Category labels (canonical key → display name)
+  CATEGORY_LABELS: {
+    food: 'Food',
+    cosmetics: 'Cosmetics',
+    crafts: 'Handcrafts',
+    textile: 'Textile',
+    home: 'Home & Living',
+    other: 'Other',
+  },
 
   // Order status labels
   STATUS: {

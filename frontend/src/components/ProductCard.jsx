@@ -6,7 +6,7 @@ export default function ProductCard({ product }) {
   const { t } = useLang();
   return (
     <Link to={`/products/${product._id}`} className="product-card">
-      <span className="category">{product.category}</span>
+      <span className="category">{t.CATEGORY_LABELS[product.category] || product.category}</span>
       <h3>{product.name}</h3>
       {product.sellerId?.name && <span className="seller">{t.SELLER_PREFIX(product.sellerId.name)}</span>}
       {product.stock === 0 ? (

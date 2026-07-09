@@ -61,7 +61,7 @@ export default function ProductListPage() {
         <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1); }} aria-label={t.ARIA_CATEGORY}>
           <option value="">{t.FILTER_ALL}</option>
           {categories.map((c) => (
-            <option key={c} value={c}>{c}</option>
+            <option key={c} value={c}>{t.CATEGORY_LABELS[c] || c}</option>
           ))}
         </select>
       </div>

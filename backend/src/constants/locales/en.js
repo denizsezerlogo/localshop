@@ -71,7 +71,7 @@ export const en = {
   VAL_PRODUCT_DESC: 'Description must be 1-2000 characters',
   VAL_PRICE: 'Price must be a number of 0 or greater',
   VAL_STOCK: 'Stock must be an integer of 0 or greater',
-  VAL_CATEGORY: 'Category must be 2-60 characters',
+  VAL_CATEGORY: 'Select a valid category',
   VAL_QUANTITY: 'Quantity must be an integer between 1 and 999',
   VAL_ORDER_STATUS: 'Status can only be SHIPPED or DELIVERED',
   VAL_CARD_NUMBER: 'Card number must be 13-19 digits',
