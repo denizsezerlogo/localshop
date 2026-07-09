@@ -17,7 +17,8 @@ Yerel üreticilerin ürünlerini doğrudan müşterilere sattığı online marke
 - [x] Backend: Seed script (`npm run seed`)
 - [x] API dokümantasyonu (Postman Collection — `docs/localshop.postman_collection.json`)
 - [x] Frontend: React (Vite) uygulaması — katalog, sepet, ödeme, siparişler, satıcı paneli
-- [x] Backend entegrasyon testleri (Vitest + Supertest — 37 senaryo)
+- [x] Backend entegrasyon testleri (Vitest + Supertest — 44 senaryo)
+- [x] Çoklu dil desteği (TR/EN — arayüz + API mesajları)
 - [ ] Demo video
 
 ## Hızlı Başlangıç
@@ -105,6 +106,6 @@ Kart bilgileri hiçbir koşulda veritabanına yazılmaz; siparişte yalnızca i�
 - **Snapshot'lı sipariş kalemleri:** Sipariş, ürünün adını/fiyatını kopyalar; ürün sonradan değişse veya silinse bile sipariş kaydı bozulmaz.
 - **FakePay soyutlaması:** Ödeme sağlayıcısı ayrı bir servis modülüdür; gerçek sağlayıcıya geçişte yalnızca bu modül değişir.
 - **Katmanlı mimari:** `routes → controllers → services → models`; iş kuralları service katmanında toplanır, controller'lar incedir.
-- **Merkezi mesajlar:** Kullanıcıya dönen tüm iş mesajları `src/constants/messages.js` altında (strings.xml yaklaşımı); i18n'e hazır.
+- **Çoklu dil (i18n):** API, `Accept-Language` başlığına göre TR/EN mesaj döner. Servis katmanı hazır metin değil mesaj anahtarı + parametre fırlatır; çeviri en dış katmanda (errorHandler/controller) yapılır. Frontend'de dil Navbar'dan değiştirilir, seçim kalıcıdır ve axios her isteğe `Accept-Language` ekler — arayüz ve API mesajları her zaman aynı dilde. Kataloglar: `backend/src/constants/locales/` ve `frontend/src/i18n/`.
 
 Tüm response'lar aynı formattadır: `{ "success": boolean, "data": object|null, "message": string }`
