@@ -9,6 +9,8 @@
 //   4000 0000 0000 0000 → başarısız ödeme
 // Diğer tüm kartlar da reddedilir.
 
+import { MSG } from '../constants/messages.js';
+
 const SUCCESS_CARD = '4242424242424242';
 
 export async function charge({ cardNumber, cardHolder, expiry, cvv, amount }) {
@@ -25,5 +27,5 @@ export async function charge({ cardNumber, cardHolder, expiry, cvv, amount }) {
     };
   }
 
-  return { success: false, reason: 'Kart reddedildi' };
+  return { success: false, reason: MSG.PAYMENT_DECLINED };
 }

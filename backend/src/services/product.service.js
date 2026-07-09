@@ -1,6 +1,7 @@
 import { Product } from '../models/product.model.js';
 import { ApiError } from '../utils/ApiError.js';
 import { escapeRegex } from '../utils/escapeRegex.js';
+import { MSG } from '../constants/messages.js';
 
 // Güncellemede yalnızca bu alanlara izin verilir (sellerId asla değiştirilemez)
 const UPDATABLE_FIELDS = ['name', 'description', 'price', 'stock', 'category'];
@@ -42,7 +43,7 @@ export async function listCategories() {
 
 export async function getProduct(id) {
   const product = await Product.findById(id).populate('sellerId', 'name');
-  if (!product) throw new ApiError(404, 'Ürün bulunamadı');
+  if (!product) throw new ApiError(404, MSG.PRODUCT_NOT_FOUND);
   return product;
 }
 
@@ -54,9 +55,9 @@ export async function createProduct(sellerId, data) {
 // Sahiplik kontrolü: her seller yalnızca KENDİ ürününü değiştirebilir/silebilir
 async function getOwnedProduct(sellerId, productId) {
   const product = await Product.findById(productId);
-  if (!product) throw new ApiError(404, 'Ürün bulunamadı');
+  if (!product) throw new ApiError(404, MSG.PRODUCT_NOT_FOUND);
   if (product.sellerId.toString() !== sellerId.toString()) {
-    throw new ApiError(403, 'Bu ürün üzerinde işlem yapma yetkiniz yok');
+    throw new ApiError(403, MSG.PRODUCT_NOT_OWNER);
   }
   return product;
 }

@@ -2,6 +2,7 @@ import { Order } from '../models/order.model.js';
 import { Cart } from '../models/cart.model.js';
 import { Product } from '../models/product.model.js';
 import { ApiError } from '../utils/ApiError.js';
+import { MSG } from '../constants/messages.js';
 
 // Seller'ın yapabileceği durum geçişleri. Ödeme durumları (PAID / PAYMENT_FAILED)
 // buradan DEĞİL, yalnızca payment service üzerinden değişir.
@@ -20,12 +21,12 @@ function buildPagination(page, limit) {
 export async function createOrderFromCart(userId) {
   const cart = await Cart.findOne({ userId }).populate('items.productId');
   const items = (cart?.items || []).filter((i) => i.productId); // silinmiş ürünleri ele
-  if (items.length === 0) throw new ApiError(400, 'Sepetiniz boş');
+  if (items.length === 0) throw new ApiError(400, MSG.CART_EMPTY);
 
   // 1) Ön kontrol: tüm kalemler için stok yeterli mi?
   for (const item of items) {
     if (item.quantity > item.productId.stock) {
-      throw new ApiError(400, `Yetersiz stok: '${item.productId.name}' için ${item.productId.stock} adet kaldı`);
+      throw new ApiError(400, MSG.ORDER_STOCK_LEFT(item.productId.name, item.productId.stock));
     }
   }
 
@@ -44,7 +45,7 @@ export async function createOrderFromCart(userId) {
       for (const done of decremented) {
         await Product.updateOne({ _id: done.id }, { $inc: { stock: done.qty } });
       }
-      throw new ApiError(400, `Yetersiz stok: '${item.productId.name}' bu sırada tükendi`);
+      throw new ApiError(400, MSG.ORDER_STOCK_RACE(item.productId.name));
     }
     decremented.push({ id: item.productId._id, qty: item.quantity });
   }
@@ -83,9 +84,9 @@ export async function listMyOrders(userId, { page, limit }) {
 // Sipariş detayı — yalnızca siparişin sahibi görebilir
 export async function getOrder(userId, orderId) {
   const order = await Order.findById(orderId);
-  if (!order) throw new ApiError(404, 'Sipariş bulunamadı');
+  if (!order) throw new ApiError(404, MSG.ORDER_NOT_FOUND);
   if (order.userId.toString() !== userId.toString()) {
-    throw new ApiError(403, 'Bu siparişi görüntüleme yetkiniz yok');
+    throw new ApiError(403, MSG.ORDER_FORBIDDEN);
   }
   return order;
 }
@@ -106,14 +107,14 @@ export async function listSellerOrders(sellerId, { page, limit }) {
 // Seller: sipariş durumu güncelleme (yalnızca PAID → SHIPPED → DELIVERED)
 export async function updateOrderStatus(sellerId, orderId, nextStatus) {
   const order = await Order.findById(orderId);
-  if (!order) throw new ApiError(404, 'Sipariş bulunamadı');
+  if (!order) throw new ApiError(404, MSG.ORDER_NOT_FOUND);
 
   const hasItems = order.items.some((i) => i.sellerId.toString() === sellerId.toString());
-  if (!hasItems) throw new ApiError(403, 'Bu siparişte size ait ürün bulunmuyor');
+  if (!hasItems) throw new ApiError(403, MSG.ORDER_NO_SELLER_ITEMS);
 
   const allowed = SELLER_TRANSITIONS[order.status] || [];
   if (!allowed.includes(nextStatus)) {
-    throw new ApiError(400, `'${order.status}' durumundan '${nextStatus}' durumuna geçilemez`);
+    throw new ApiError(400, MSG.ORDER_BAD_TRANSITION(order.status, nextStatus));
   }
 
   order.status = nextStatus;

@@ -3,6 +3,7 @@
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model.js';
 import { ApiError } from '../utils/ApiError.js';
+import { MSG } from '../constants/messages.js';
 
 // JWT üretimi: payload'da yalnızca id ve role taşınır (hassas veri koymayız)
 function signToken(user) {
@@ -13,7 +14,7 @@ function signToken(user) {
 
 export async function register({ name, email, password, role }) {
   const existing = await User.findOne({ email });
-  if (existing) throw new ApiError(409, 'Bu email ile kayıtlı bir kullanıcı zaten var');
+  if (existing) throw new ApiError(409, MSG.AUTH_EMAIL_TAKEN);
 
   const user = await User.create({ name, email, password, role });
   return { user, token: signToken(user) };
@@ -25,7 +26,7 @@ export async function login({ email, password }) {
   const valid = user && (await user.comparePassword(password));
 
   // "Kullanıcı yok" ile "parola yanlış" ayrımı bilerek yapılmaz (bilgi sızdırmama)
-  if (!valid) throw new ApiError(401, 'Email veya parola hatalı');
+  if (!valid) throw new ApiError(401, MSG.AUTH_BAD_CREDENTIALS);
 
   return { user, token: signToken(user) };
 }

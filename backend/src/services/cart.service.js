@@ -1,6 +1,7 @@
 import { Cart } from '../models/cart.model.js';
 import { Product } from '../models/product.model.js';
 import { ApiError } from '../utils/ApiError.js';
+import { MSG } from '../constants/messages.js';
 
 // Sepet item'larında müşteriye gösterilecek ürün alanları
 const PRODUCT_FIELDS = 'name price stock category sellerId';
@@ -33,7 +34,7 @@ export async function getCart(userId) {
 
 export async function addItem(userId, productId, quantity) {
   const product = await Product.findById(productId);
-  if (!product) throw new ApiError(404, 'Ürün bulunamadı');
+  if (!product) throw new ApiError(404, MSG.PRODUCT_NOT_FOUND);
 
   const cart = await getOrCreateCart(userId);
   const existing = cart.items.find((item) => item.productId.toString() === productId);
@@ -41,7 +42,7 @@ export async function addItem(userId, productId, quantity) {
 
   // Stok kontrolü: sepetteki mevcut adet + eklenmek istenen adet stoğu aşamaz
   if (newQuantity > product.stock) {
-    throw new ApiError(400, `Yetersiz stok: '${product.name}' için en fazla ${product.stock} adet ekleyebilirsiniz`);
+    throw new ApiError(400, MSG.CART_MAX_STOCK(product.name, product.stock));
   }
 
   if (existing) {
@@ -57,12 +58,12 @@ export async function addItem(userId, productId, quantity) {
 export async function updateItemQuantity(userId, productId, quantity) {
   const cart = await Cart.findOne({ userId });
   const item = cart?.items.find((i) => i.productId.toString() === productId);
-  if (!item) throw new ApiError(404, 'Ürün sepette bulunamadı');
+  if (!item) throw new ApiError(404, MSG.CART_ITEM_NOT_FOUND);
 
   const product = await Product.findById(productId);
-  if (!product) throw new ApiError(404, 'Ürün bulunamadı');
+  if (!product) throw new ApiError(404, MSG.PRODUCT_NOT_FOUND);
   if (quantity > product.stock) {
-    throw new ApiError(400, `Yetersiz stok: '${product.name}' için en fazla ${product.stock} adet seçebilirsiniz`);
+    throw new ApiError(400, MSG.CART_MAX_STOCK_UPDATE(product.name, product.stock));
   }
 
   item.quantity = quantity;
@@ -73,7 +74,7 @@ export async function updateItemQuantity(userId, productId, quantity) {
 export async function removeItem(userId, productId) {
   const cart = await Cart.findOne({ userId });
   const exists = cart?.items.some((i) => i.productId.toString() === productId);
-  if (!exists) throw new ApiError(404, 'Ürün sepette bulunamadı');
+  if (!exists) throw new ApiError(404, MSG.CART_ITEM_NOT_FOUND);
 
   cart.items = cart.items.filter((i) => i.productId.toString() !== productId);
   await cart.save();

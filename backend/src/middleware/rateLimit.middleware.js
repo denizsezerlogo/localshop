@@ -1,4 +1,5 @@
 import rateLimit from 'express-rate-limit';
+import { MSG } from '../constants/messages.js';
 
 // Genel limit: IP başına 15 dakikada 300 istek
 export const generalLimiter = rateLimit({
@@ -6,7 +7,7 @@ export const generalLimiter = rateLimit({
   limit: 300,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { success: false, data: null, message: 'Çok fazla istek gönderildi, lütfen daha sonra tekrar deneyin' },
+  message: { success: false, data: null, message: MSG.RATE_LIMITED },
 });
 
 // Ödeme endpoint'i için sıkı limit (kart deneme saldırısı önlemi)
@@ -15,7 +16,7 @@ export const paymentLimiter = rateLimit({
   limit: 20,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { success: false, data: null, message: 'Çok fazla ödeme denemesi yapıldı, lütfen daha sonra tekrar deneyin' },
+  message: { success: false, data: null, message: MSG.RATE_LIMITED_PAYMENT },
 });
 
 // Auth endpointleri için daha sıkı limit (brute-force önlemi)
@@ -24,5 +25,5 @@ export const authLimiter = rateLimit({
   limit: 30,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { success: false, data: null, message: 'Çok fazla deneme yapıldı, lütfen 15 dakika sonra tekrar deneyin' },
+  message: { success: false, data: null, message: MSG.RATE_LIMITED_AUTH },
 });
