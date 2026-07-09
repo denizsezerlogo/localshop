@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
-import { MSG } from '../constants/messages';
+import { useLang } from '../i18n/LanguageContext';
 
 export default function NotFoundPage() {
+  const { t } = useLang();
   return (
-    <EmptyState title={MSG.NOT_FOUND_TITLE} hint={MSG.NOT_FOUND_HINT}>
+    <EmptyState title={t.NOT_FOUND_TITLE} hint={t.NOT_FOUND_HINT}>
       <Link to="/" className="btn btn-primary" style={{ marginTop: 12 }}>
-        Ürünlere dön
+        {t.BTN_BACK_PRODUCTS}
       </Link>
     </EmptyState>
   );

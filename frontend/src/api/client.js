@@ -1,15 +1,16 @@
 // Merkezi HTTP istemcisi — sayfalar axios'u doğrudan kullanmaz, bu katmandan geçer.
 import axios from 'axios';
-import { MSG } from '../constants/messages';
+import { getCurrentLang, getDict } from '../i18n/LanguageContext';
 
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
 });
 
-// Her isteğe JWT ekle
+// Her isteğe JWT + istek dili ekle (backend mesajları arayüz diliyle aynı gelsin)
 client.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  config.headers['Accept-Language'] = getCurrentLang();
   return config;
 });
 
@@ -24,7 +25,7 @@ client.interceptors.response.use(
       localStorage.removeItem('user');
       window.location.href = '/login';
     }
-    const message = error.response?.data?.message || MSG.GENERIC_ERROR;
+    const message = error.response?.data?.message || getDict().GENERIC_ERROR;
     return Promise.reject(new Error(message));
   }
 );

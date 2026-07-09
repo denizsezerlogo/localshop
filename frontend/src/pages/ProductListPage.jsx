@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { listProducts, listCategories } from '../api/products.api';
 import { useFetch } from '../hooks/useFetch';
+import { useLang } from '../i18n/LanguageContext';
 import ProductCard from '../components/ProductCard';
 import Loader from '../components/Loader';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
 import Pagination from '../components/Pagination';
-import { MSG } from '../constants/messages';
 
 export default function ProductListPage() {
+  const { t } = useLang();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [category, setCategory] = useState('');
@@ -45,30 +46,30 @@ export default function ProductListPage() {
   return (
     <>
       <div className="page-header">
-        <h1>Ürünler</h1>
-        {data?.pagination && <span className="muted">{data.pagination.total} ürün</span>}
+        <h1>{t.PAGE_PRODUCTS}</h1>
+        {data?.pagination && <span className="muted">{t.PRODUCT_COUNT(data.pagination.total)}</span>}
       </div>
 
       <div className="filters">
         <input
           type="search"
-          placeholder="Ürün ara… (örn. bal)"
+          placeholder={t.PH_SEARCH}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          aria-label="Ürün ara"
+          aria-label={t.ARIA_SEARCH}
         />
-        <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1); }} aria-label="Kategori filtresi">
-          <option value="">Tüm kategoriler</option>
+        <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1); }} aria-label={t.ARIA_CATEGORY}>
+          <option value="">{t.FILTER_ALL}</option>
           {categories.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
       </div>
 
-      {loading && <Loader label={MSG.LOADING_PRODUCTS} />}
+      {loading && <Loader label={t.LOADING_PRODUCTS} />}
       {!loading && error && <ErrorMessage message={error} onRetry={refetch} />}
       {!loading && !error && data?.items?.length === 0 && (
-        <EmptyState title={MSG.EMPTY_PRODUCTS_TITLE} hint={MSG.EMPTY_PRODUCTS_HINT} />
+        <EmptyState title={t.EMPTY_PRODUCTS_TITLE} hint={t.EMPTY_PRODUCTS_HINT} />
       )}
       {!loading && !error && data?.items?.length > 0 && (
         <>

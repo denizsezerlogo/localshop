@@ -1,12 +1,13 @@
-import { MSG } from '../constants/messages';
+import { useLang } from '../i18n/LanguageContext';
 
 export default function ErrorMessage({ message, onRetry }) {
+  const { t } = useLang();
   return (
     <div className="alert alert-error">
-      <p>{message || MSG.ERROR_FALLBACK}</p>
+      <p>{message || t.ERROR_FALLBACK}</p>
       {onRetry && (
         <button className="btn btn-outline btn-sm" style={{ marginTop: 8 }} onClick={onRetry}>
-          {MSG.RETRY}
+          {t.RETRY}
         </button>
       )}
     </div>

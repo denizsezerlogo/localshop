@@ -12,8 +12,10 @@ import SellerDashboardPage from './pages/SellerDashboardPage.jsx';
 import AddProductPage from './pages/AddProductPage.jsx';
 import EditProductPage from './pages/EditProductPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import { useLang } from './i18n/LanguageContext.jsx';
 
 export default function App() {
+  const { t } = useLang();
   return (
     <div className="app">
       <Navbar />
@@ -38,7 +40,7 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      <footer className="footer">LocalShop — yerel üreticilerden doğrudan alışveriş</footer>
+      <footer className="footer">{t.FOOTER_TAGLINE}</footer>
     </div>
   );
 }

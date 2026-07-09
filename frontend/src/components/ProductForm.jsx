@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { MSG } from '../constants/messages';
+import { useLang } from '../i18n/LanguageContext';
 
 // Ürün ekleme ve düzenleme sayfalarının ortak formu.
 // initialValues verilirse düzenleme modunda çalışır.
-export default function ProductForm({ initialValues, onSubmit, submitLabel = 'Kaydet' }) {
+export default function ProductForm({ initialValues, onSubmit, submitLabel }) {
+  const { t } = useLang();
   const [values, setValues] = useState({
     name: initialValues?.name || '',
     description: initialValues?.description || '',
@@ -19,13 +20,13 @@ export default function ProductForm({ initialValues, onSubmit, submitLabel = 'Ka
   // Client tarafı ön kontrol: boş sayı alanı Number('') → 0'a dönüşüp
   // istenmeden ücretsiz ürün / sıfır stok oluşturmasın. Nihai otorite backend validasyonudur.
   const validate = () => {
-    if (values.name.trim().length < 2) return 'Ürün adı en az 2 karakter olmalı';
-    if (!values.description.trim()) return 'Açıklama zorunludur';
+    if (values.name.trim().length < 2) return t.VAL_PRODUCT_NAME;
+    if (!values.description.trim()) return t.VAL_DESC_REQUIRED;
     const price = Number(values.price);
-    if (values.price === '' || !Number.isFinite(price) || price < 0) return 'Geçerli bir fiyat girin (0 veya üzeri)';
+    if (values.price === '' || !Number.isFinite(price) || price < 0) return t.VAL_PRICE;
     const stock = Number(values.stock);
-    if (values.stock === '' || !Number.isInteger(stock) || stock < 0) return 'Stok 0 veya daha büyük bir tam sayı olmalı';
-    if (values.category.trim().length < 2) return 'Kategori en az 2 karakter olmalı';
+    if (values.stock === '' || !Number.isInteger(stock) || stock < 0) return t.VAL_STOCK;
+    if (values.category.trim().length < 2) return t.VAL_CATEGORY;
     return '';
   };
 
@@ -58,33 +59,33 @@ export default function ProductForm({ initialValues, onSubmit, submitLabel = 'Ka
       {error && <div className="alert alert-error">{error}</div>}
 
       <div className="field">
-        <label htmlFor="name">Ürün adı</label>
-        <input id="name" value={values.name} onChange={set('name')} placeholder="Örn. Organik Çiçek Balı" required />
+        <label htmlFor="name">{t.FIELD_PRODUCT_NAME}</label>
+        <input id="name" value={values.name} onChange={set('name')} placeholder={t.PH_PRODUCT_NAME} required />
       </div>
 
       <div className="field">
-        <label htmlFor="description">Açıklama</label>
-        <textarea id="description" rows={4} value={values.description} onChange={set('description')} placeholder="Ürünü kısaca tanıtın" required />
+        <label htmlFor="description">{t.FIELD_DESCRIPTION}</label>
+        <textarea id="description" rows={4} value={values.description} onChange={set('description')} placeholder={t.PH_DESCRIPTION} required />
       </div>
 
       <div className="field-row">
         <div className="field">
-          <label htmlFor="price">Fiyat (₺)</label>
+          <label htmlFor="price">{t.FIELD_PRICE}</label>
           <input id="price" type="number" min="0" step="0.01" value={values.price} onChange={set('price')} required />
         </div>
         <div className="field">
-          <label htmlFor="stock">Stok</label>
+          <label htmlFor="stock">{t.FIELD_STOCK}</label>
           <input id="stock" type="number" min="0" step="1" value={values.stock} onChange={set('stock')} required />
         </div>
       </div>
 
       <div className="field">
-        <label htmlFor="category">Kategori</label>
-        <input id="category" value={values.category} onChange={set('category')} placeholder="Örn. food, cosmetics, crafts" required />
+        <label htmlFor="category">{t.FIELD_CATEGORY}</label>
+        <input id="category" value={values.category} onChange={set('category')} placeholder={t.PH_CATEGORY} required />
       </div>
 
       <button className="btn btn-primary" type="submit" disabled={submitting}>
-        {submitting ? MSG.BUSY_SAVING : submitLabel}
+        {submitting ? t.BUSY_SAVING : submitLabel}
       </button>
     </form>
   );

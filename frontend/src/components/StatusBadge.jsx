@@ -1,4 +1,4 @@
-import { STATUS_LABELS } from '../constants/messages';
+import { useLang } from '../i18n/LanguageContext';
 
 const STATUS_CLASSES = {
   PENDING_PAYMENT: 'badge-warning',
@@ -9,9 +9,10 @@ const STATUS_CLASSES = {
 };
 
 export default function StatusBadge({ status }) {
+  const { t } = useLang();
   return (
     <span className={`badge ${STATUS_CLASSES[status] || 'badge-info'}`}>
-      {STATUS_LABELS[status] || status}
+      {t.STATUS[status] || status}
     </span>
   );
 }

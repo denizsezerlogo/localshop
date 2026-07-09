@@ -1,10 +1,11 @@
-import { MSG } from '../constants/messages';
+import { useLang } from '../i18n/LanguageContext';
 
-export default function Loader({ label = MSG.LOADING }) {
+export default function Loader({ label }) {
+  const { t } = useLang();
   return (
     <div className="loader-wrap" role="status">
       <div className="spinner" />
-      <span>{label}</span>
+      <span>{label || t.LOADING}</span>
     </div>
   );
 }

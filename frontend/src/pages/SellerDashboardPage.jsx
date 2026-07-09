@@ -3,30 +3,31 @@ import { Link } from 'react-router-dom';
 import { listMyProducts, deleteProduct } from '../api/products.api';
 import { listSellerOrders, updateOrderStatus } from '../api/orders.api';
 import { useFetch } from '../hooks/useFetch';
+import { useLang } from '../i18n/LanguageContext';
 import { formatDate, formatPrice } from '../utils/format';
 import StatusBadge from '../components/StatusBadge';
 import Loader from '../components/Loader';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
 import Pagination from '../components/Pagination';
-import { MSG } from '../constants/messages';
 
 export default function SellerDashboardPage() {
+  const { t } = useLang();
   const [tab, setTab] = useState('products');
 
   return (
     <>
       <div className="page-header">
-        <h1>Satıcı Paneli</h1>
-        <Link to="/seller/products/new" className="btn btn-primary">+ Yeni Ürün</Link>
+        <h1>{t.PAGE_SELLER}</h1>
+        <Link to="/seller/products/new" className="btn btn-primary">{t.BTN_NEW_PRODUCT}</Link>
       </div>
 
       <div className="tabs" role="tablist">
         <button role="tab" className={`tab${tab === 'products' ? ' active' : ''}`} onClick={() => setTab('products')}>
-          Ürünlerim
+          {t.TAB_PRODUCTS}
         </button>
         <button role="tab" className={`tab${tab === 'orders' ? ' active' : ''}`} onClick={() => setTab('orders')}>
-          Gelen Siparişler
+          {t.TAB_ORDERS}
         </button>
       </div>
 
@@ -36,12 +37,13 @@ export default function SellerDashboardPage() {
 }
 
 function ProductsTab() {
+  const { t } = useLang();
   const [page, setPage] = useState(1);
   const [actionError, setActionError] = useState('');
   const { data, loading, error, refetch } = useFetch(() => listMyProducts({ page }), [page]);
 
   const handleDelete = async (product) => {
-    if (!window.confirm(MSG.DELETE_PRODUCT_CONFIRM(product.name))) return;
+    if (!window.confirm(t.DELETE_PRODUCT_CONFIRM(product.name))) return;
     setActionError('');
     try {
       await deleteProduct(product._id);
@@ -51,12 +53,12 @@ function ProductsTab() {
     }
   };
 
-  if (loading) return <Loader label={MSG.LOADING_PRODUCTS} />;
+  if (loading) return <Loader label={t.LOADING_PRODUCTS} />;
   if (error) return <ErrorMessage message={error} onRetry={refetch} />;
   if (data.items.length === 0) {
     return (
-      <EmptyState title={MSG.EMPTY_SELLER_PRODUCTS_TITLE} hint={MSG.EMPTY_SELLER_PRODUCTS_HINT}>
-        <Link to="/seller/products/new" className="btn btn-primary" style={{ marginTop: 12 }}>Ürün Ekle</Link>
+      <EmptyState title={t.EMPTY_SELLER_PRODUCTS_TITLE} hint={t.EMPTY_SELLER_PRODUCTS_HINT}>
+        <Link to="/seller/products/new" className="btn btn-primary" style={{ marginTop: 12 }}>{t.BTN_ADD_FIRST}</Link>
       </EmptyState>
     );
   }
@@ -68,11 +70,11 @@ function ProductsTab() {
         <table>
           <thead>
             <tr>
-              <th>Ürün</th>
-              <th>Kategori</th>
-              <th>Fiyat</th>
-              <th>Stok</th>
-              <th>İşlemler</th>
+              <th>{t.TH_PRODUCT}</th>
+              <th>{t.TH_CATEGORY}</th>
+              <th>{t.TH_PRICE}</th>
+              <th>{t.TH_STOCK}</th>
+              <th>{t.TH_ACTIONS}</th>
             </tr>
           </thead>
           <tbody>
@@ -83,11 +85,11 @@ function ProductsTab() {
                 </td>
                 <td>{product.category}</td>
                 <td>{formatPrice(product.price)}</td>
-                <td>{product.stock === 0 ? <span className="stock-out">Tükendi</span> : product.stock}</td>
+                <td>{product.stock === 0 ? <span className="stock-out">{t.STOCK_OUT}</span> : product.stock}</td>
                 <td>
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <Link to={`/seller/products/${product._id}/edit`} className="btn btn-outline btn-sm">Düzenle</Link>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(product)}>Sil</button>
+                    <Link to={`/seller/products/${product._id}/edit`} className="btn btn-outline btn-sm">{t.BTN_EDIT}</Link>
+                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(product)}>{t.BTN_DELETE}</button>
                   </div>
                 </td>
               </tr>
@@ -101,6 +103,7 @@ function ProductsTab() {
 }
 
 function OrdersTab() {
+  const { t } = useLang();
   const [page, setPage] = useState(1);
   const [actionError, setActionError] = useState('');
   const [busyId, setBusyId] = useState(null);
@@ -119,10 +122,10 @@ function OrdersTab() {
     }
   };
 
-  if (loading) return <Loader label={MSG.LOADING_ORDERS} />;
+  if (loading) return <Loader label={t.LOADING_ORDERS} />;
   if (error) return <ErrorMessage message={error} onRetry={refetch} />;
   if (data.items.length === 0) {
-    return <EmptyState title={MSG.EMPTY_SELLER_ORDERS_TITLE} hint={MSG.EMPTY_SELLER_ORDERS_HINT} />;
+    return <EmptyState title={t.EMPTY_SELLER_ORDERS_TITLE} hint={t.EMPTY_SELLER_ORDERS_HINT} />;
   }
 
   return (
@@ -132,10 +135,10 @@ function OrdersTab() {
         <div className="order-card" key={order._id}>
           <div className="order-head">
             <div>
-              <strong>Sipariş #{order._id.slice(-8).toUpperCase()}</strong>
+              <strong>{t.ORDER_NO(order._id.slice(-8).toUpperCase())}</strong>
               <p className="muted">
                 {formatDate(order.createdAt)}
-                {order.userId?.name && ` · Müşteri: ${order.userId.name}`}
+                {order.userId?.name && ` · ${t.CUSTOMER_PREFIX(order.userId.name)}`}
               </p>
             </div>
             <StatusBadge status={order.status} />
@@ -152,12 +155,12 @@ function OrdersTab() {
             <div style={{ display: 'flex', gap: 8 }}>
               {order.status === 'PAID' && (
                 <button className="btn btn-primary btn-sm" disabled={busyId === order._id} onClick={() => handleStatus(order._id, 'SHIPPED')}>
-                  Kargoya Ver
+                  {t.BTN_SHIP}
                 </button>
               )}
               {order.status === 'SHIPPED' && (
                 <button className="btn btn-primary btn-sm" disabled={busyId === order._id} onClick={() => handleStatus(order._id, 'DELIVERED')}>
-                  Teslim Edildi Olarak İşaretle
+                  {t.BTN_DELIVER}
                 </button>
               )}
             </div>

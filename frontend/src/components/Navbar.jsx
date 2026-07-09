@@ -1,16 +1,20 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useLang } from '../i18n/LanguageContext';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { itemCount } = useCart();
+  const { lang, setLang, t } = useLang();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
+
+  const navClass = ({ isActive }) => `nav-link${isActive ? ' active' : ''}`;
 
   return (
     <header className="navbar">
@@ -19,24 +23,25 @@ export default function Navbar() {
           Local<span>Shop</span>
         </Link>
         <nav className="nav-links">
-          <NavLink to="/" end className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-            Ürünler
+          <NavLink to="/" end className={navClass}>
+            {t.NAV_PRODUCTS}
           </NavLink>
 
           {user?.role === 'customer' && (
             <>
-              <NavLink to="/cart" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-                Sepet{itemCount > 0 && <span className="cart-badge">{itemCount}</span>}
+              <NavLink to="/cart" className={navClass}>
+                {t.NAV_CART}
+                {itemCount > 0 && <span className="cart-badge">{itemCount}</span>}
               </NavLink>
-              <NavLink to="/orders" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-                Siparişlerim
+              <NavLink to="/orders" className={navClass}>
+                {t.NAV_ORDERS}
               </NavLink>
             </>
           )}
 
           {user?.role === 'seller' && (
-            <NavLink to="/seller" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-              Satıcı Paneli
+            <NavLink to="/seller" className={navClass}>
+              {t.NAV_SELLER_PANEL}
             </NavLink>
           )}
 
@@ -44,19 +49,35 @@ export default function Navbar() {
             <>
               <span className="nav-user">{user.name}</span>
               <button className="btn btn-outline btn-sm" onClick={handleLogout}>
-                Çıkış
+                {t.NAV_LOGOUT}
               </button>
             </>
           ) : (
             <>
-              <NavLink to="/login" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-                Giriş
+              <NavLink to="/login" className={navClass}>
+                {t.NAV_LOGIN}
               </NavLink>
               <Link to="/register" className="btn btn-primary btn-sm">
-                Kayıt Ol
+                {t.NAV_REGISTER}
               </Link>
             </>
           )}
+
+          {/* Dil değiştirici */}
+          <div className="lang-switch" role="group" aria-label="Language">
+            <button
+              className={`lang-btn${lang === 'tr' ? ' active' : ''}`}
+              onClick={() => setLang('tr')}
+            >
+              TR
+            </button>
+            <button
+              className={`lang-btn${lang === 'en' ? ' active' : ''}`}
+              onClick={() => setLang('en')}
+            >
+              EN
+            </button>
+          </div>
         </nav>
       </div>
     </header>

@@ -1,0 +1,180 @@
+// English UI dictionary. Mirrors the exact keys of tr.js.
+export const en = {
+  // General
+  LOADING: 'Loading…',
+  GENERIC_ERROR: 'Something went wrong, please try again',
+  ERROR_FALLBACK: 'Something went wrong.',
+  RETRY: 'Try again',
+  FOOTER_TAGLINE: 'LocalShop — shop directly from local producers',
+
+  // Loading states
+  LOADING_PRODUCTS: 'Loading products…',
+  LOADING_PRODUCT: 'Loading product…',
+  LOADING_ORDERS: 'Loading orders…',
+  LOADING_ORDER: 'Loading order…',
+  LOADING_CART: 'Loading cart…',
+
+  // Busy button states
+  BUSY_LOGIN: 'Signing in…',
+  BUSY_REGISTER: 'Signing up…',
+  BUSY_SAVING: 'Saving…',
+  BUSY_ADDING: 'Adding…',
+  BUSY_CHECKOUT: 'Creating order…',
+  BUSY_PAYING: 'Processing payment…',
+
+  // Navigation
+  NAV_PRODUCTS: 'Products',
+  NAV_CART: 'Cart',
+  NAV_ORDERS: 'My Orders',
+  NAV_SELLER_PANEL: 'Seller Dashboard',
+  NAV_LOGIN: 'Sign In',
+  NAV_REGISTER: 'Sign Up',
+  NAV_LOGOUT: 'Sign Out',
+
+  // Auth
+  LOGIN_TITLE: 'Sign In',
+  REGISTER_TITLE: 'Sign Up',
+  FIELD_NAME: 'Full Name',
+  FIELD_EMAIL: 'Email',
+  FIELD_PASSWORD: 'Password',
+  FIELD_ROLE: 'Account type',
+  PH_NAME: 'Your full name',
+  PH_EMAIL: 'you@example.com',
+  PH_PASSWORD_LOGIN: '••••••',
+  PH_PASSWORD_REGISTER: 'At least 6 characters',
+  ROLE_CUSTOMER: 'Customer',
+  ROLE_CUSTOMER_DESC: 'Discover and buy products',
+  ROLE_SELLER: 'Seller',
+  ROLE_SELLER_DESC: 'Sell your products',
+  BTN_LOGIN: 'Sign In',
+  BTN_REGISTER: 'Sign Up',
+  AUTH_NO_ACCOUNT: "Don't have an account?",
+  LINK_REGISTER: 'Sign up',
+  AUTH_HAVE_ACCOUNT: 'Already have an account?',
+  LINK_LOGIN: 'Sign in',
+
+  // Catalog
+  PAGE_PRODUCTS: 'Products',
+  PRODUCT_COUNT: (count) => `${count} products`,
+  PH_SEARCH: 'Search products… (e.g. honey)',
+  ARIA_SEARCH: 'Search products',
+  ARIA_CATEGORY: 'Category filter',
+  FILTER_ALL: 'All categories',
+  SELLER_PREFIX: (name) => `Seller: ${name}`,
+  STOCK_OUT: 'Out of stock',
+  STOCK_OUT_DETAIL: 'This product is out of stock',
+  STOCK_LAST: (count) => `Only ${count} left`,
+  STOCK_AVAILABLE: (count) => `In stock: ${count}`,
+  EMPTY_PRODUCTS_TITLE: 'No products found',
+  EMPTY_PRODUCTS_HINT: 'Try changing your search or filter criteria.',
+  SELLER_CANNOT_SHOP: 'Seller accounts cannot shop.',
+
+  // Pagination
+  PAGE_OF: (page, pages) => `Page ${page} / ${pages}`,
+  BTN_PREV: '← Previous',
+  BTN_NEXT: 'Next →',
+
+  // Product detail
+  BACK_TO_PRODUCTS: '← Back to products',
+  FIELD_QTY: 'Quantity',
+  BTN_ADD_CART: 'Add to Cart',
+  CART_ITEM_ADDED: 'Product added to cart.',
+  LINK_GO_CART: 'Go to cart →',
+
+  // Cart
+  PAGE_CART: 'My Cart',
+  UNIT_PRICE: (price) => `${price} each`,
+  BTN_REMOVE: 'Remove',
+  TOTAL_PREFIX: (total) => `Total: ${total}`,
+  BTN_CHECKOUT: 'Checkout',
+  EMPTY_CART_TITLE: 'Your cart is empty',
+  EMPTY_CART_HINT: 'Discover products and add them to your cart.',
+  BTN_BROWSE: 'Browse products',
+
+  // Orders
+  PAGE_ORDERS: 'My Orders',
+  ORDER_NO: (code) => `Order #${code}`,
+  BTN_PAY: 'Pay Now',
+  BTN_PAY_RETRY: 'Retry Payment',
+  EMPTY_ORDERS_TITLE: 'No orders yet',
+  EMPTY_ORDERS_HINT: 'Browse products to place your first order.',
+
+  // Payment
+  PAGE_PAYMENT: 'Payment',
+  TEST_CARDS_TITLE: 'Test cards',
+  TEST_CARDS_SUCCESS: 'success',
+  TEST_CARDS_FAIL: 'declined',
+  FIELD_CARD_NUMBER: 'Card Number',
+  FIELD_CARD_HOLDER: 'Card Holder',
+  FIELD_EXPIRY: 'Expiry (MM/YY)',
+  FIELD_CVV: 'CVV',
+  PH_CARD_HOLDER: 'Full name',
+  BTN_PAY_AMOUNT: (amount) => `Pay ${amount}`,
+  ORDER_SUMMARY: 'Order Summary',
+  TOTAL_LABEL: 'Total',
+  PAYMENT_SUCCESS_TITLE: 'Payment Successful 🎉',
+  PAYMENT_SUCCESS_DETAIL: (orderCode) => `Your payment for order #${orderCode} has been received.`,
+  PAYMENT_FAILED_RETRY: (message) => `${message} — check your card details and try again.`,
+  ORDER_NOT_PAYABLE_TITLE: 'This order cannot be paid',
+  ORDER_NOT_PAYABLE_HINT: 'The order is not eligible for payment.',
+  BTN_GO_ORDERS: 'Go to My Orders',
+  BTN_BACK_ORDERS: 'Back to my orders',
+
+  // Seller dashboard
+  PAGE_SELLER: 'Seller Dashboard',
+  BTN_NEW_PRODUCT: '+ New Product',
+  TAB_PRODUCTS: 'My Products',
+  TAB_ORDERS: 'Incoming Orders',
+  TH_PRODUCT: 'Product',
+  TH_CATEGORY: 'Category',
+  TH_PRICE: 'Price',
+  TH_STOCK: 'Stock',
+  TH_ACTIONS: 'Actions',
+  BTN_EDIT: 'Edit',
+  BTN_DELETE: 'Delete',
+  DELETE_PRODUCT_CONFIRM: (name) => `Delete '${name}'? This cannot be undone.`,
+  EMPTY_SELLER_PRODUCTS_TITLE: 'No products yet',
+  EMPTY_SELLER_PRODUCTS_HINT: 'Add your first product to start selling.',
+  BTN_ADD_FIRST: 'Add Product',
+  EMPTY_SELLER_ORDERS_TITLE: 'No orders yet',
+  EMPTY_SELLER_ORDERS_HINT: 'Orders for your products will be listed here.',
+  CUSTOMER_PREFIX: (name) => `Customer: ${name}`,
+  BTN_SHIP: 'Mark as Shipped',
+  BTN_DELIVER: 'Mark as Delivered',
+
+  // Product form
+  FIELD_PRODUCT_NAME: 'Product name',
+  PH_PRODUCT_NAME: 'e.g. Organic Flower Honey',
+  FIELD_DESCRIPTION: 'Description',
+  PH_DESCRIPTION: 'Briefly describe the product',
+  FIELD_PRICE: 'Price (₺)',
+  FIELD_STOCK: 'Stock',
+  FIELD_CATEGORY: 'Category',
+  PH_CATEGORY: 'e.g. food, cosmetics, crafts',
+  VAL_PRODUCT_NAME: 'Product name must be at least 2 characters',
+  VAL_DESC_REQUIRED: 'Description is required',
+  VAL_PRICE: 'Enter a valid price (0 or greater)',
+  VAL_STOCK: 'Stock must be an integer of 0 or greater',
+  VAL_CATEGORY: 'Category must be at least 2 characters',
+
+  // Add / edit product
+  PAGE_ADD_PRODUCT: 'Add New Product',
+  BTN_SUBMIT_ADD: 'Add Product',
+  PAGE_EDIT_PRODUCT: 'Edit Product',
+  BTN_SUBMIT_EDIT: 'Save Changes',
+  BACK_TO_SELLER: '← Back to seller dashboard',
+
+  // 404
+  NOT_FOUND_TITLE: 'Page not found',
+  NOT_FOUND_HINT: 'The page you are looking for may have moved or never existed.',
+  BTN_BACK_PRODUCTS: 'Back to products',
+
+  // Order status labels
+  STATUS: {
+    PENDING_PAYMENT: 'Awaiting Payment',
+    PAID: 'Paid',
+    PAYMENT_FAILED: 'Payment Failed',
+    SHIPPED: 'Shipped',
+    DELIVERED: 'Delivered',
+  },
+};

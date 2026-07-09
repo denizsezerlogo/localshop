@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useLang } from '../i18n/LanguageContext';
 import { createOrders } from '../api/orders.api';
 import { formatPrice } from '../utils/format';
 import EmptyState from '../components/EmptyState';
 import Loader from '../components/Loader';
 import ErrorMessage from '../components/ErrorMessage';
-import { MSG } from '../constants/messages';
 
 export default function CartPage() {
   const { cart, total, loading, error: loadError, refreshCart, updateItem, removeItem, clearLocal } = useCart();
+  const { t } = useLang();
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState(null);
@@ -64,13 +65,13 @@ export default function CartPage() {
 
   // Boş sepet mesajından ÖNCE yükleme ve hata durumları ele alınır;
   // aksi halde başarısız istek "boş sepet" gibi görünür.
-  if (loading) return <Loader label={MSG.LOADING_CART} />;
+  if (loading) return <Loader label={t.LOADING_CART} />;
   if (loadError) return <ErrorMessage message={loadError} onRetry={refreshCart} />;
 
   if (items.length === 0) {
     return (
-      <EmptyState title={MSG.EMPTY_CART_TITLE} hint={MSG.EMPTY_CART_HINT}>
-        <Link to="/" className="btn btn-primary" style={{ marginTop: 12 }}>Ürünlere göz at</Link>
+      <EmptyState title={t.EMPTY_CART_TITLE} hint={t.EMPTY_CART_HINT}>
+        <Link to="/" className="btn btn-primary" style={{ marginTop: 12 }}>{t.BTN_BROWSE}</Link>
       </EmptyState>
     );
   }
@@ -78,7 +79,7 @@ export default function CartPage() {
   return (
     <>
       <div className="page-header">
-        <h1>Sepetim</h1>
+        <h1>{t.PAGE_CART}</h1>
       </div>
       {error && <div className="alert alert-error">{error}</div>}
       <div className="card">
@@ -88,7 +89,7 @@ export default function CartPage() {
             <div className="cart-row" key={product._id}>
               <div>
                 <Link to={`/products/${product._id}`} style={{ fontWeight: 600 }}>{product.name}</Link>
-                <p className="muted">{formatPrice(product.price)} / adet</p>
+                <p className="muted">{t.UNIT_PRICE(formatPrice(product.price))}</p>
               </div>
               <div className="qty-picker">
                 <button
@@ -109,16 +110,16 @@ export default function CartPage() {
               </div>
               <strong>{formatPrice(product.price * item.quantity)}</strong>
               <button className="btn btn-danger btn-sm" disabled={busyId === product._id} onClick={() => handleRemove(product._id)}>
-                Kaldır
+                {t.BTN_REMOVE}
               </button>
             </div>
           );
         })}
 
         <div className="cart-summary">
-          <span className="cart-total">Toplam: {formatPrice(total)}</span>
+          <span className="cart-total">{t.TOTAL_PREFIX(formatPrice(total))}</span>
           <button className="btn btn-primary" onClick={handleCheckout} disabled={checkingOut}>
-            {checkingOut ? MSG.BUSY_CHECKOUT : 'Siparişi Tamamla'}
+            {checkingOut ? t.BUSY_CHECKOUT : t.BTN_CHECKOUT}
           </button>
         </div>
       </div>
