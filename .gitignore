@@ -11,3 +11,6 @@ build/
 # Loglar ve işletim sistemi dosyaları
 *.log
 .DS_Store
+
+# Yerel çalışma notları (teslim kapsamı dışında)
+docs/demo-video-senaryosu.md
