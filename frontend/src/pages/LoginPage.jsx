@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { MSG } from '../constants/messages';
 
 export default function LoginPage() {
   const { user, login } = useAuth();
@@ -43,7 +44,7 @@ export default function LoginPage() {
           <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" required />
         </div>
         <button className="btn btn-primary btn-block" type="submit" disabled={submitting}>
-          {submitting ? 'Giriş yapılıyor…' : 'Giriş Yap'}
+          {submitting ? MSG.BUSY_LOGIN : 'Giriş Yap'}
         </button>
       </form>
       <p className="muted" style={{ marginTop: 16, textAlign: 'center' }}>

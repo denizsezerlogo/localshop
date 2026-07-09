@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { createOrders } from '../api/orders.api';
 import { formatPrice } from '../utils/format';
 import EmptyState from '../components/EmptyState';
+import { MSG } from '../constants/messages';
 
 export default function CartPage() {
   const { cart, total, updateItem, removeItem, clearLocal } = useCart();
@@ -61,7 +62,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <EmptyState title="Sepetiniz boş" hint="Ürünleri keşfedip sepetinize ekleyin.">
+      <EmptyState title={MSG.EMPTY_CART_TITLE} hint={MSG.EMPTY_CART_HINT}>
         <Link to="/" className="btn btn-primary" style={{ marginTop: 12 }}>Ürünlere göz at</Link>
       </EmptyState>
     );
@@ -110,7 +111,7 @@ export default function CartPage() {
         <div className="cart-summary">
           <span className="cart-total">Toplam: {formatPrice(total)}</span>
           <button className="btn btn-primary" onClick={handleCheckout} disabled={checkingOut}>
-            {checkingOut ? 'Sipariş oluşturuluyor…' : 'Siparişi Tamamla'}
+            {checkingOut ? MSG.BUSY_CHECKOUT : 'Siparişi Tamamla'}
           </button>
         </div>
       </div>

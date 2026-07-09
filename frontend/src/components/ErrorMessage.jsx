@@ -1,10 +1,12 @@
+import { MSG } from '../constants/messages';
+
 export default function ErrorMessage({ message, onRetry }) {
   return (
     <div className="alert alert-error">
-      <p>{message || 'Bir şeyler ters gitti.'}</p>
+      <p>{message || MSG.ERROR_FALLBACK}</p>
       {onRetry && (
         <button className="btn btn-outline btn-sm" style={{ marginTop: 8 }} onClick={onRetry}>
-          Tekrar dene
+          {MSG.RETRY}
         </button>
       )}
     </div>

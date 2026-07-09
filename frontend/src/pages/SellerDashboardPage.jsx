@@ -9,6 +9,7 @@ import Loader from '../components/Loader';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
 import Pagination from '../components/Pagination';
+import { MSG } from '../constants/messages';
 
 export default function SellerDashboardPage() {
   const [tab, setTab] = useState('products');
@@ -40,7 +41,7 @@ function ProductsTab() {
   const { data, loading, error, refetch } = useFetch(() => listMyProducts({ page }), [page]);
 
   const handleDelete = async (product) => {
-    if (!window.confirm(`'${product.name}' silinsin mi? Bu işlem geri alınamaz.`)) return;
+    if (!window.confirm(MSG.DELETE_PRODUCT_CONFIRM(product.name))) return;
     setActionError('');
     try {
       await deleteProduct(product._id);
@@ -50,11 +51,11 @@ function ProductsTab() {
     }
   };
 
-  if (loading) return <Loader label="Ürünler yükleniyor…" />;
+  if (loading) return <Loader label={MSG.LOADING_PRODUCTS} />;
   if (error) return <ErrorMessage message={error} onRetry={refetch} />;
   if (data.items.length === 0) {
     return (
-      <EmptyState title="Henüz ürününüz yok" hint="İlk ürününüzü ekleyerek satışa başlayın.">
+      <EmptyState title={MSG.EMPTY_SELLER_PRODUCTS_TITLE} hint={MSG.EMPTY_SELLER_PRODUCTS_HINT}>
         <Link to="/seller/products/new" className="btn btn-primary" style={{ marginTop: 12 }}>Ürün Ekle</Link>
       </EmptyState>
     );
@@ -118,10 +119,10 @@ function OrdersTab() {
     }
   };
 
-  if (loading) return <Loader label="Siparişler yükleniyor…" />;
+  if (loading) return <Loader label={MSG.LOADING_ORDERS} />;
   if (error) return <ErrorMessage message={error} onRetry={refetch} />;
   if (data.items.length === 0) {
-    return <EmptyState title="Henüz sipariş yok" hint="Ürünleriniz sipariş aldığında burada listelenir." />;
+    return <EmptyState title={MSG.EMPTY_SELLER_ORDERS_TITLE} hint={MSG.EMPTY_SELLER_ORDERS_HINT} />;
   }
 
   return (

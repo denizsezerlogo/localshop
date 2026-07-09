@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/format';
 import Loader from '../components/Loader';
 import ErrorMessage from '../components/ErrorMessage';
+import { MSG } from '../constants/messages';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -20,7 +21,7 @@ export default function ProductDetailPage() {
 
   const { data, loading, error, refetch } = useFetch(() => getProduct(id), [id]);
 
-  if (loading) return <Loader label="Ürün yükleniyor…" />;
+  if (loading) return <Loader label={MSG.LOADING_PRODUCT} />;
   if (error) return <ErrorMessage message={error} onRetry={refetch} />;
 
   const product = data.product;
@@ -36,7 +37,7 @@ export default function ProductDetailPage() {
     setActionError('');
     try {
       await addItem(product._id, quantity);
-      setNotice('Ürün sepete eklendi.');
+      setNotice(MSG.CART_ITEM_ADDED);
     } catch (err) {
       setActionError(err.message);
     } finally {
@@ -62,9 +63,9 @@ export default function ProductDetailPage() {
             {formatPrice(product.price)}
           </p>
           {outOfStock ? (
-            <p className="stock-out" style={{ marginBottom: 12 }}>Bu ürün tükendi</p>
+            <p className="stock-out" style={{ marginBottom: 12 }}>{MSG.STOCK_OUT_DETAIL}</p>
           ) : (
-            <p className="muted" style={{ marginBottom: 12 }}>Stok: {product.stock} adet</p>
+            <p className="muted" style={{ marginBottom: 12 }}>{MSG.STOCK_AVAILABLE(product.stock)}</p>
           )}
 
           {notice && <div className="alert alert-success">{notice} <Link to="/cart" style={{ fontWeight: 700 }}>Sepete git →</Link></div>}
@@ -81,11 +82,11 @@ export default function ProductDetailPage() {
                 </div>
               </div>
               <button className="btn btn-primary btn-block" onClick={handleAdd} disabled={adding}>
-                {adding ? 'Ekleniyor…' : 'Sepete Ekle'}
+                {adding ? MSG.BUSY_ADDING : 'Sepete Ekle'}
               </button>
             </>
           )}
-          {user?.role === 'seller' && <p className="muted">Satıcı hesabıyla alışveriş yapılamaz.</p>}
+          {user?.role === 'seller' && <p className="muted">{MSG.SELLER_CANNOT_SHOP}</p>}
         </div>
       </div>
     </>

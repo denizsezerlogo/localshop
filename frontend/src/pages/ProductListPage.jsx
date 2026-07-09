@@ -6,6 +6,7 @@ import Loader from '../components/Loader';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
 import Pagination from '../components/Pagination';
+import { MSG } from '../constants/messages';
 
 export default function ProductListPage() {
   const [search, setSearch] = useState('');
@@ -62,10 +63,10 @@ export default function ProductListPage() {
         </select>
       </div>
 
-      {loading && <Loader label="Ürünler yükleniyor…" />}
+      {loading && <Loader label={MSG.LOADING_PRODUCTS} />}
       {!loading && error && <ErrorMessage message={error} onRetry={refetch} />}
       {!loading && !error && data?.items?.length === 0 && (
-        <EmptyState title="Ürün bulunamadı" hint="Arama veya filtre kriterlerini değiştirmeyi deneyin." />
+        <EmptyState title={MSG.EMPTY_PRODUCTS_TITLE} hint={MSG.EMPTY_PRODUCTS_HINT} />
       )}
       {!loading && !error && data?.items?.length > 0 && (
         <>

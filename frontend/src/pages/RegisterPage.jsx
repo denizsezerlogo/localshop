@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { MSG } from '../constants/messages';
 
 export default function RegisterPage() {
   const { user, register } = useAuth();
@@ -64,7 +65,7 @@ export default function RegisterPage() {
           </div>
         </div>
         <button className="btn btn-primary btn-block" type="submit" disabled={submitting}>
-          {submitting ? 'Kayıt yapılıyor…' : 'Kayıt Ol'}
+          {submitting ? MSG.BUSY_REGISTER : 'Kayıt Ol'}
         </button>
       </form>
       <p className="muted" style={{ marginTop: 16, textAlign: 'center' }}>

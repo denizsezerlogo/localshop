@@ -1,5 +1,6 @@
 // Merkezi HTTP istemcisi — sayfalar axios'u doğrudan kullanmaz, bu katmandan geçer.
 import axios from 'axios';
+import { MSG } from '../constants/messages';
 
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
@@ -23,7 +24,7 @@ client.interceptors.response.use(
       localStorage.removeItem('user');
       window.location.href = '/login';
     }
-    const message = error.response?.data?.message || 'Bir şeyler ters gitti, lütfen tekrar deneyin';
+    const message = error.response?.data?.message || MSG.GENERIC_ERROR;
     return Promise.reject(new Error(message));
   }
 );

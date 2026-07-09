@@ -7,6 +7,7 @@ import { formatPrice } from '../utils/format';
 import Loader from '../components/Loader';
 import ErrorMessage from '../components/ErrorMessage';
 import StatusBadge from '../components/StatusBadge';
+import { MSG } from '../constants/messages';
 
 // Girdi maskeleri: kart numarası 4'lü gruplar, tarih AA/YY
 const formatCardNumber = (value) =>
@@ -26,7 +27,7 @@ export default function PaymentPage() {
 
   const { data, loading, error, refetch } = useFetch(() => getOrder(orderId), [orderId]);
 
-  if (loading) return <Loader label="Sipariş yükleniyor…" />;
+  if (loading) return <Loader label={MSG.LOADING_ORDER} />;
   if (error) return <ErrorMessage message={error} onRetry={refetch} />;
 
   const order = paidOrder || data.order;
@@ -36,9 +37,9 @@ export default function PaymentPage() {
   if (paidOrder) {
     return (
       <div className="card auth-card" style={{ textAlign: 'center' }}>
-        <h1 style={{ marginBottom: 8 }}>Ödeme Başarılı 🎉</h1>
+        <h1 style={{ marginBottom: 8 }}>{MSG.PAYMENT_SUCCESS_TITLE}</h1>
         <p className="muted" style={{ marginBottom: 16 }}>
-          Sipariş #{paidOrder._id.slice(-8).toUpperCase()} için ödemeniz alındı.
+          {MSG.PAYMENT_SUCCESS_DETAIL(paidOrder._id.slice(-8).toUpperCase())}
         </p>
         <StatusBadge status={paidOrder.status} />
         <div style={{ marginTop: 20 }}>
@@ -51,9 +52,9 @@ export default function PaymentPage() {
   if (!payable) {
     return (
       <div className="card auth-card" style={{ textAlign: 'center' }}>
-        <h1 style={{ marginBottom: 12 }}>Bu sipariş ödenemez</h1>
+        <h1 style={{ marginBottom: 12 }}>{MSG.ORDER_NOT_PAYABLE_TITLE}</h1>
         <StatusBadge status={order.status} />
-        <p className="muted" style={{ margin: '12px 0 20px' }}>Sipariş ödemeye uygun durumda değil.</p>
+        <p className="muted" style={{ margin: '12px 0 20px' }}>{MSG.ORDER_NOT_PAYABLE_HINT}</p>
         <Link to="/orders" className="btn btn-outline">Siparişlerime dön</Link>
       </div>
     );
@@ -74,7 +75,7 @@ export default function PaymentPage() {
       if (res.data.paymentSuccess) {
         setPaidOrder(res.data.order);
       } else {
-        setPayError(`${res.message} — kartınızı kontrol edip tekrar deneyebilirsiniz.`);
+        setPayError(MSG.PAYMENT_FAILED_RETRY(res.message));
         refetch(); // sipariş durumu PAYMENT_FAILED oldu, güncel hali çek
       }
     } catch (err) {
@@ -152,7 +153,7 @@ export default function PaymentPage() {
               </div>
             </div>
             <button className="btn btn-primary btn-block" type="submit" disabled={paying}>
-              {paying ? 'Ödeme işleniyor…' : `${formatPrice(order.totalPrice)} Öde`}
+              {paying ? MSG.BUSY_PAYING : `${formatPrice(order.totalPrice)} Öde`}
             </button>
           </form>
         </div>

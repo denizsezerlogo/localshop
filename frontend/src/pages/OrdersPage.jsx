@@ -8,6 +8,7 @@ import Loader from '../components/Loader';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
 import Pagination from '../components/Pagination';
+import { MSG } from '../constants/messages';
 
 const PAYABLE_STATUSES = ['PENDING_PAYMENT', 'PAYMENT_FAILED'];
 
@@ -24,10 +25,10 @@ export default function OrdersPage() {
 
       {location.state?.notice && <div className="alert alert-info">{location.state.notice}</div>}
 
-      {loading && <Loader label="Siparişler yükleniyor…" />}
+      {loading && <Loader label={MSG.LOADING_ORDERS} />}
       {!loading && error && <ErrorMessage message={error} onRetry={refetch} />}
       {!loading && !error && data?.items?.length === 0 && (
-        <EmptyState title="Henüz siparişiniz yok" hint="İlk siparişinizi vermek için ürünlere göz atın.">
+        <EmptyState title={MSG.EMPTY_ORDERS_TITLE} hint={MSG.EMPTY_ORDERS_HINT}>
           <Link to="/" className="btn btn-primary" style={{ marginTop: 12 }}>Ürünlere göz at</Link>
         </EmptyState>
       )}

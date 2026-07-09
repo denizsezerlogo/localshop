@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MSG } from '../constants/messages';
 
 // Ürün ekleme ve düzenleme sayfalarının ortak formu.
 // initialValues verilirse düzenleme modunda çalışır.
@@ -65,7 +66,7 @@ export default function ProductForm({ initialValues, onSubmit, submitLabel = 'Ka
       </div>
 
       <button className="btn btn-primary" type="submit" disabled={submitting}>
-        {submitting ? 'Kaydediliyor…' : submitLabel}
+        {submitting ? MSG.BUSY_SAVING : submitLabel}
       </button>
     </form>
   );
