@@ -7,7 +7,7 @@ export default function RegisterPage() {
   const { user, register } = useAuth();
   const { t } = useLang();
   const navigate = useNavigate();
-  const [values, setValues] = useState({ name: '', email: '', password: '', role: 'customer' });
+  const [values, setValues] = useState({ name: '', email: '', password: '', passwordConfirm: '', role: 'customer' });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -17,13 +17,23 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Parola tekrarı yalnızca client'ta doğrulanır; API'ye gönderilmez
+    if (values.password !== values.passwordConfirm) {
+      setError(t.VAL_PASSWORD_MISMATCH);
+      return;
+    }
+
     setError('');
     setSubmitting(true);
     try {
-      const created = await register(values);
+      const { passwordConfirm, ...payload } = values;
+      const created = await register(payload);
       navigate(created.role === 'seller' ? '/seller' : '/', { replace: true });
     } catch (err) {
       setError(err.message);
+      // Başarısız denemede parola alanları temizlenir
+      setValues((prev) => ({ ...prev, password: '', passwordConfirm: '' }));
     } finally {
       setSubmitting(false);
     }
@@ -45,6 +55,17 @@ export default function RegisterPage() {
         <div className="field">
           <label htmlFor="password">{t.FIELD_PASSWORD}</label>
           <input id="password" type="password" value={values.password} onChange={set('password')} placeholder={t.PH_PASSWORD_REGISTER} required />
+        </div>
+        <div className="field">
+          <label htmlFor="passwordConfirm">{t.FIELD_PASSWORD_CONFIRM}</label>
+          <input
+            id="passwordConfirm"
+            type="password"
+            value={values.passwordConfirm}
+            onChange={set('passwordConfirm')}
+            placeholder={t.PH_PASSWORD_CONFIRM}
+            required
+          />
         </div>
         <div className="field">
           <label>{t.FIELD_ROLE}</label>

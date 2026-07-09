@@ -106,6 +106,7 @@ Kart bilgileri hiçbir koşulda veritabanına yazılmaz; siparişte yalnızca i�
 - **Snapshot'lı sipariş kalemleri:** Sipariş, ürünün adını/fiyatını kopyalar; ürün sonradan değişse veya silinse bile sipariş kaydı bozulmaz.
 - **FakePay soyutlaması:** Ödeme sağlayıcısı ayrı bir servis modülüdür; gerçek sağlayıcıya geçişte yalnızca bu modül değişir.
 - **Katmanlı mimari:** `routes → controllers → services → models`; iş kuralları service katmanında toplanır, controller'lar incedir.
+- **Oturum modeli:** Stateless JWT, varsayılan ömür 1 gün (`JWT_EXPIRES_IN`). Süre dolunca istemci 401 alır ve otomatik çıkış yapılır. Çıkış işlemi token'ı istemciden siler; stateless JWT'de sunucu tarafı iptal (revocation) yoktur — üretim için kısa ömürlü access token + refresh token deseni önerilir.
 - **Çoklu dil (i18n):** API, `Accept-Language` başlığına göre TR/EN mesaj döner. Servis katmanı hazır metin değil mesaj anahtarı + parametre fırlatır; çeviri en dış katmanda (errorHandler/controller) yapılır. Frontend'de dil Navbar'dan değiştirilir, seçim kalıcıdır ve axios her isteğe `Accept-Language` ekler — arayüz ve API mesajları her zaman aynı dilde. Kataloglar: `backend/src/constants/locales/` ve `frontend/src/i18n/`.
 
 Tüm response'lar aynı formattadır: `{ "success": boolean, "data": object|null, "message": string }`

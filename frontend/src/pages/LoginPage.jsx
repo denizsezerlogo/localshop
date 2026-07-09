@@ -26,6 +26,7 @@ export default function LoginPage() {
       navigate(location.state?.from || fallback, { replace: true });
     } catch (err) {
       setError(err.message);
+      setPassword(''); // başarısız denemede parola ekranda bırakılmaz
     } finally {
       setSubmitting(false);
     }
