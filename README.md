@@ -16,12 +16,14 @@ Yerel üreticilerin ürünlerini doğrudan müşterilere sattığı online marke
 - [x] Backend: FakePay ödeme simülasyonu (ödeme anında stok rezervasyonu)
 - [x] Backend: Seed script (`npm run seed`)
 - [x] API dokümantasyonu (Postman Collection — `docs/localshop.postman_collection.json`)
-- [ ] Frontend: React uygulaması
+- [x] Frontend: React (Vite) uygulaması — katalog, sepet, ödeme, siparişler, satıcı paneli
 - [ ] Demo video
 
-## Hızlı Başlangıç (backend)
+## Hızlı Başlangıç
 
 Gereksinimler: Node.js LTS, lokal MongoDB (`brew services start mongodb-community`)
+
+### Backend
 
 ```bash
 cd backend
@@ -29,6 +31,15 @@ npm install
 cp .env.example .env   # değerleri gerekirse düzenle
 npm run seed           # örnek kullanıcı + ürün verisi (opsiyonel)
 npm run dev            # http://localhost:3000
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+cp .env.example .env   # API adresi (varsayılan: http://localhost:3000/api)
+npm run dev            # http://localhost:5173
 ```
 
 Seed hesapları (parola: `sifre123`): seller → `ayse@localshop.dev`, `mehmet@localshop.dev` · customer → `deniz@localshop.dev`, `elif@localshop.dev`
