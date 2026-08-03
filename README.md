@@ -13,7 +13,7 @@ Yerel üreticilerin ürünlerini doğrudan müşterilere sattığı online marke
 - Katalog: arama, kategori filtresi, sayfalama; stok bilgisi
 - Satıcı başına bölünen siparişler, kurallı durum akışı, FakePay ödeme simülasyonu
 - Çoklu dil: arayüz **ve** API mesajları TR/EN (Navbar'dan değiştirilebilir)
-- 44 senaryoluk entegrasyon test paketi
+- 45 senaryoluk entegrasyon test paketi (eşzamanlılık senaryoları dahil)
 
 ## Mimari
 
@@ -111,7 +111,7 @@ cd backend
 npm test
 ```
 
-Kapsam: auth akışı, ürün CRUD + sahiplik kontrolleri, sepet stok kuralları, satıcı bazlı sipariş bölme, ödeme anında stok rezervasyonu/iadesi, eşzamanlı ödeme yarışında stok tutarlılığı, sipariş durum geçiş kuralları ve i18n katalog bütünlüğü.
+Kapsam: auth akışı, ürün CRUD + sahiplik kontrolleri, sepet stok kuralları, satıcı bazlı sipariş bölme, ödeme anında stok rezervasyonu/iadesi, **aynı siparişe eşzamanlı çift ödeme denemesi** (atomik kilit, `Promise.all` ile), stok tükenmişken ödemenin reddi, sipariş durum geçiş kuralları ve i18n katalog bütünlüğü.
 
 ## API Dokümantasyonu
 
@@ -161,6 +161,8 @@ Kart bilgileri hiçbir koşulda veritabanına yazılmaz; siparişte yalnızca i�
 
 - **Satıcı başına sipariş:** Checkout'ta sepet satıcıya göre gruplanır ve satıcı başına ayrı sipariş oluşturulur. Böylece her siparişin tek `status`'u ve tek ödeme akışı olur; hiçbir satıcı başka bir satıcının kalemlerinin durumunu değiştiremez.
 - **Ödeme anında stok rezervasyonu:** Stok, sipariş oluşturulurken yalnızca kontrol edilir; atomik rezervasyon (koşullu `$inc`) ödeme sırasında yapılır, reddedilen ödemede anında iade edilir. Yarım bırakılan siparişler stok kilitleyemez.
+- **Eşzamanlılık güvenliği:** Ödeme, sipariş atomik olarak "sahiplenilerek" başlar (`findOneAndUpdate` + kilit alanı) — aynı siparişe eşzamanlı ikinci ödeme isteği çift tahsilat yapamaz. Checkout da sepeti atomik boşaltarak başlar — mükerrer sipariş oluşamaz. Sepet işlemlerindeki sürüm çakışmaları (VersionError) 409 ile raporlanır.
+- **Arama (MVP takası):** Arama regex tabanlıdır ve küçük katalogda yeterlidir; ölçekte MongoDB `$text` index'ine geçilmelidir.
 - **Snapshot'lı sipariş kalemleri:** Sipariş, ürünün adını/fiyatını kopyalar; ürün sonradan değişse veya silinse bile sipariş kaydı bozulmaz.
 - **FakePay soyutlaması:** Ödeme sağlayıcısı ayrı bir servis modülüdür; gerçek sağlayıcıya geçişte yalnızca bu modül değişir.
 - **Sabit kategori anahtarları:** Kategoriler serbest metin değil, canonical anahtarlardır (`food`, `cosmetics`, …). Veri tutarlı kalır (aynı kategorinin "Gıda"/"food" diye bölünmesi imkânsız), görünen ad ise arayüz diline göre çevrilir. API her zaman anahtarla çalışır: `?category=food`.
