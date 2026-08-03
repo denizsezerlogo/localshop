@@ -8,6 +8,8 @@ export const en = {
   RATE_LIMITED: 'Too many requests, please try again later',
   RATE_LIMITED_AUTH: 'Too many attempts, please try again in 15 minutes',
   RATE_LIMITED_PAYMENT: 'Too many payment attempts, please try again later',
+  CONCURRENT_MODIFICATION: 'This record was modified by another operation, please try again',
+  INVALID_INPUT: 'Invalid input provided',
 
   // Auth
   AUTH_REQUIRED: 'You need to sign in',

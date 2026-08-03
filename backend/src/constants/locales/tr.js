@@ -10,6 +10,8 @@ export const tr = {
   RATE_LIMITED: 'Çok fazla istek gönderildi, lütfen daha sonra tekrar deneyin',
   RATE_LIMITED_AUTH: 'Çok fazla deneme yapıldı, lütfen 15 dakika sonra tekrar deneyin',
   RATE_LIMITED_PAYMENT: 'Çok fazla ödeme denemesi yapıldı, lütfen daha sonra tekrar deneyin',
+  CONCURRENT_MODIFICATION: 'Bu kayıt başka bir işlemle aynı anda değişti, lütfen tekrar deneyin',
+  INVALID_INPUT: 'Geçersiz veri gönderildi',
 
   // Auth
   AUTH_REQUIRED: 'Giriş yapmanız gerekiyor',

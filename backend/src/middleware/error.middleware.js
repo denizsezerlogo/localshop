@@ -25,10 +25,19 @@ export function errorHandler(err, req, res, next) {
     message = t(locale, 'INVALID_ID');
   }
   // Mongoose: şema validasyon hatası (güvenlik ağı — kullanıcıya dönen asıl
-  // validasyon express-validator katmanındadır ve çok dillidir)
+  // validasyon express-validator katmanındadır ve çok dillidir).
+  // Şema mesajları Türkçe yazıldığından, istek dili farklıysa jenerik mesaja düşülür.
   if (err.name === 'ValidationError') {
     statusCode = 400;
-    message = Object.values(err.errors).map((e) => e.message).join(', ');
+    message =
+      locale === DEFAULT_LOCALE
+        ? Object.values(err.errors).map((e) => e.message).join(', ')
+        : t(locale, 'INVALID_INPUT');
+  }
+  // Mongoose: eşzamanlı değişiklik çakışması (__v uyuşmazlığı) — 500 değil 409
+  if (err.name === 'VersionError') {
+    statusCode = 409;
+    message = t(locale, 'CONCURRENT_MODIFICATION');
   }
   // MongoDB: unique alan çakışması (örn. kayıtlı email)
   if (err.code === 11000) {

@@ -30,6 +30,10 @@ const orderSchema = new mongoose.Schema(
       ),
       default: undefined,
     },
+    // Eşzamanlılık kilidi: aynı siparişe iki ödeme isteği aynı anda gelirse
+    // yalnızca biri kilidi atomik olarak alabilir (bkz. payment.service.js).
+    // İç alan — API cevaplarında gösterilmez (toJSON'da temizlenir).
+    paymentInProgress: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
@@ -40,6 +44,7 @@ orderSchema.index({ 'items.sellerId': 1 });
 orderSchema.set('toJSON', {
   transform: (doc, ret) => {
     delete ret.__v;
+    delete ret.paymentInProgress; // iç kilit alanı, istemciyi ilgilendirmez
     return ret;
   },
 });

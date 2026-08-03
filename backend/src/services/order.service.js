@@ -25,44 +25,63 @@ function buildPagination(page, limit) {
 // Stok burada yalnızca KONTROL edilir (erken ve anlaşılır hata için);
 // kesin rezervasyon ödeme anında yapılır (bkz. stock.service.js).
 export async function createOrderFromCart(userId) {
-  const cart = await Cart.findOne({ userId }).populate('items.productId');
-  const items = (cart?.items || []).filter((i) => i.productId); // silinmiş ürünleri ele
+  // Sepeti ATOMİK olarak sahiplen: içeriğini tek DB işleminde boşalt ve
+  // boşaltma ÖNCESİ halini al (new: false). Aynı sepete eşzamanlı gelen
+  // ikinci checkout isteği boş sepet bulur — mükerrer sipariş imkânsızlaşır.
+  const cart = await Cart.findOneAndUpdate(
+    { userId, 'items.0': { $exists: true } },
+    { $set: { items: [] } },
+    { new: false }
+  ).populate('items.productId');
+  if (!cart) throw new ApiError(400, 'CART_EMPTY');
+
+  const items = cart.items.filter((i) => i.productId); // silinmiş ürünleri ele
   if (items.length === 0) throw new ApiError(400, 'CART_EMPTY');
 
+  // Erken hata durumunda sepeti geri koy (kullanıcı sepetini kaybetmesin)
+  const restoreCart = () =>
+    Cart.updateOne(
+      { userId },
+      { $set: { items: items.map((i) => ({ productId: i.productId._id, quantity: i.quantity })) } }
+    );
+
+  // Yumuşak stok kontrolü (kesin rezervasyon ödeme anında — bkz. stock.service.js)
   for (const item of items) {
     if (item.quantity > item.productId.stock) {
+      await restoreCart();
       throw new ApiError(400, 'ORDER_STOCK_LEFT', item.productId.name, item.productId.stock);
     }
   }
 
-  // Satıcıya göre grupla
-  const groups = new Map();
-  for (const item of items) {
-    const key = item.productId.sellerId.toString();
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(item);
+  try {
+    // Satıcıya göre grupla
+    const groups = new Map();
+    for (const item of items) {
+      const key = item.productId.sellerId.toString();
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(item);
+    }
+
+    // Her grup için snapshot'lı bir sipariş oluştur.
+    // Toplam HER ZAMAN server'da, DB fiyatlarından hesaplanır.
+    const orders = [];
+    for (const groupItems of groups.values()) {
+      const orderItems = groupItems.map((i) => ({
+        productId: i.productId._id,
+        name: i.productId.name,
+        price: i.productId.price,
+        sellerId: i.productId.sellerId,
+        quantity: i.quantity,
+      }));
+      const totalPrice = Number(orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0).toFixed(2));
+      orders.push(await Order.create({ userId, items: orderItems, totalPrice }));
+    }
+
+    return orders;
+  } catch (err) {
+    await restoreCart().catch(() => {});
+    throw err;
   }
-
-  // Her grup için snapshot'lı bir sipariş oluştur.
-  // Toplam HER ZAMAN server'da, DB fiyatlarından hesaplanır.
-  const orders = [];
-  for (const groupItems of groups.values()) {
-    const orderItems = groupItems.map((i) => ({
-      productId: i.productId._id,
-      name: i.productId.name,
-      price: i.productId.price,
-      sellerId: i.productId.sellerId,
-      quantity: i.quantity,
-    }));
-    const totalPrice = Number(orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0).toFixed(2));
-    orders.push(await Order.create({ userId, items: orderItems, totalPrice }));
-  }
-
-  // Sepeti temizle
-  cart.items = [];
-  await cart.save();
-
-  return orders;
 }
 
 // Müşterinin kendi sipariş geçmişi
