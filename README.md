@@ -62,7 +62,7 @@ localshop/
 │       ├── pages/         # 11 sayfa (Login, Register, ProductList, …, Payment)
 │       ├── styles/        # saf CSS design system (custom properties)
 │       └── utils/         # fiyat/tarih formatlama
-└── docs/                  # Postman collection, demo video senaryosu
+└── docs/                  # Postman collection (API dokümantasyonu)
 ```
 
 ## Kullanılan Teknolojiler
