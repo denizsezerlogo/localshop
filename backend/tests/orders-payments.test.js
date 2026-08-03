@@ -111,6 +111,30 @@ describe('FakePay: ödeme ve stok yaşam döngüsü', () => {
     expect(res.status).toBe(400);
   });
 
+  it('aynı siparişe EŞZAMANLI iki ödeme denemesinde yalnızca biri tahsil edilir', async () => {
+    const { product: p } = await createProduct(sellerA.token, { name: 'Nar Ekşisi', price: 150, stock: 5 });
+    await addToCart(customer.token, p._id, 2);
+    const { orders } = await createOrders(customer.token);
+    const oid = orders[0]._id;
+
+    // İki ödeme isteği aynı anda: atomik kilit sayesinde yalnızca biri işlenmeli
+    const [r1, r2] = await Promise.all([
+      payOrder(customer.token, oid, SUCCESS_CARD),
+      payOrder(customer.token, oid, SUCCESS_CARD),
+    ]);
+
+    const statuses = [r1.status, r2.status].sort((a, b) => a - b);
+    expect(statuses).toEqual([200, 400]); // biri öder, diğeri kilide takılır
+
+    const winner = r1.status === 200 ? r1 : r2;
+    expect(winner.body.data.paymentSuccess).toBe(true);
+    expect(winner.body.data.order.status).toBe('PAID');
+
+    // Stok yalnızca BİR kez düşmüş olmalı (çift tahsilat yok)
+    const fresh = await getProduct(p._id);
+    expect(fresh.body.data.product.stock).toBe(3);
+  });
+
   it('ödeme anında stok yetersizse ödeme reddedilir, sipariş beklemede kalır', async () => {
     // Kalan stok 3; iki müşteri de 3'er adetlik sipariş oluşturur (soft check ikisine de izin verir)
     await addToCart(customer.token, product._id, 3);
