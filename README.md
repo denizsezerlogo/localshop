@@ -4,7 +4,7 @@ Yerel üreticilerin ürünlerini doğrudan müşterilere sattığı online marke
 
 **Stack:** React 19 (Vite) · Node.js · Express 5 · MongoDB (Mongoose)
 
-**Demo Video:** _[link eklenecek]_
+**Demo Video:** [YouTube — LocalShop Demo](https://www.youtube.com/watch?v=fUwcJpZI10c)
 
 ## Özellikler
 
